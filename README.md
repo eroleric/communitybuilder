@@ -2,6 +2,8 @@
 
 CommonHands is an interactive cross-platform skill-trading prototype built with Expo and TypeScript.
 
+Public web preview: https://eroleric.github.io/communitybuilder/
+
 ## What you can explore
 
 The main navigation is Discover, Trades, and Messages. Open your profile from the avatar; voluntary Communities and the free shelf are secondary links.
