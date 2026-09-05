@@ -1,4 +1,4 @@
-import { cp, mkdir, readdir, readFile, rename, rm, writeFile } from "node:fs/promises";
+import { cp, mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 const dist = path.resolve("dist");
@@ -46,7 +46,7 @@ let html = await readFile(path.join(dist, "index.html"), "utf8");
 for (const file of await readdir(webBundleDirectory)) {
   if (file.endsWith(".js")) {
     const deployedName = file.replace(/\.js$/, ".pages.js");
-    await rename(
+    await cp(
       path.join(webBundleDirectory, file),
       path.join(webBundleDirectory, deployedName),
     );
