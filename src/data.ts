@@ -17,6 +17,7 @@ export type Member = {
   color: string;
   available: string;
   remote: boolean;
+  offerReach: Record<string, "Local" | "Remote" | "Local & Remote">;
   examples: string[];
   interests: string[];
   workingStyle: string;
@@ -57,6 +58,11 @@ const memberSeeds: Omit<
     color: "#e1ebee",
     available: "This week",
     remote: false,
+    offerReach: {
+      Plumbing: "Local",
+      "Home repairs": "Local",
+      "Water systems": "Local",
+    },
     examples: [
       "Replace a kitchen faucet",
       "Repair a running toilet",
@@ -80,6 +86,11 @@ const memberSeeds: Omit<
     color: "#e8ecd6",
     available: "Weekends",
     remote: false,
+    offerReach: {
+      Gardening: "Local",
+      Farming: "Local",
+      "Land care": "Local",
+    },
     examples: [
       "Mow a small yard",
       "Prepare a vegetable bed",
@@ -103,6 +114,11 @@ const memberSeeds: Omit<
     color: "#f0e3d3",
     available: "This week",
     remote: false,
+    offerReach: {
+      Carpentry: "Local",
+      Woodworking: "Local",
+      "Home repairs": "Local",
+    },
     examples: [
       "Fit a floating shelf",
       "Repair a wooden chair",
@@ -126,6 +142,11 @@ const memberSeeds: Omit<
     color: "#eee1e9",
     available: "This week",
     remote: false,
+    offerReach: {
+      "Pet care": "Local",
+      "House sitting": "Local",
+      Errands: "Local",
+    },
     examples: [
       "A 30-minute neighborhood walk",
       "An afternoon pet visit",
@@ -149,6 +170,11 @@ const memberSeeds: Omit<
     color: "#f4ebcb",
     available: "Weekends",
     remote: false,
+    offerReach: {
+      Electrical: "Local",
+      "Home repairs": "Local",
+      "Technical help": "Remote",
+    },
     examples: [
       "Assess a light fixture replacement",
       "Plan under-cabinet lighting",
@@ -172,6 +198,11 @@ const memberSeeds: Omit<
     color: "#e3e4f2",
     available: "This week",
     remote: true,
+    offerReach: {
+      Tutoring: "Remote",
+      Languages: "Remote",
+      "Computer help": "Remote",
+    },
     examples: [
       "An hour of conversational French",
       "Help with everyday math",
@@ -202,7 +233,7 @@ const personal: Record<
     communityIds: ["homestead-builders", "makers-united"],
     latitude: 40.735,
     longitude: -74.273,
-    locationLabel: "Maplewood, NJ",
+    locationLabel: "Maplewood",
     exchangeIdeas: [
       "A faucet replacement for help with a light fixture — both jobs checked first.",
     ],
@@ -216,7 +247,7 @@ const personal: Record<
     communityIds: ["neighbor-network", "homestead-builders"],
     latitude: 40.748,
     longitude: -74.266,
-    locationLabel: "Maplewood, NJ",
+    locationLabel: "Maplewood",
     exchangeIdeas: ["A small-yard tidy-up for help putting up a shelf."],
   },
   james: {
@@ -228,7 +259,7 @@ const personal: Record<
     communityIds: ["makers-united", "homestead-builders"],
     latitude: 40.722,
     longitude: -74.279,
-    locationLabel: "South Orange, NJ",
+    locationLabel: "South Orange",
     exchangeIdeas: ["Repair a chair in exchange for a hand in the garden."],
   },
   amara: {
@@ -240,7 +271,7 @@ const personal: Record<
     communityIds: ["neighbor-network"],
     latitude: 40.729,
     longitude: -74.263,
-    locationLabel: "Irvington, NJ",
+    locationLabel: "Irvington",
     exchangeIdeas: ["A few dog walks for help getting a garden bed started."],
   },
   daniel: {
@@ -252,7 +283,7 @@ const personal: Record<
     communityIds: [],
     latitude: 40.751,
     longitude: -74.254,
-    locationLabel: "Union, NJ",
+    locationLabel: "Union",
     exchangeIdeas: [
       "Help with a lighting job for a small plumbing repair, after checking both scopes.",
     ],
@@ -266,7 +297,7 @@ const personal: Record<
     communityIds: ["remote-skills", "homestead-builders"],
     latitude: 40.79,
     longitude: -74.21,
-    locationLabel: "Montclair, NJ",
+    locationLabel: "Montclair",
     exchangeIdeas: ["A language session for a little design help."],
   },
 };
@@ -372,7 +403,7 @@ export const initialState: State = {
     bio: "",
     skills: ["Electrical", "Home repairs"],
     availability: "Weekends",
-    radius: "5 miles",
+    radius: "20 miles",
     onboarded: false,
     interests: [],
     workingStyle: "",
@@ -381,11 +412,11 @@ export const initialState: State = {
     exclusions: "",
     latitude: 40.7312,
     longitude: -74.2714,
-    approximateLocationLabel: "Maplewood, NJ",
+    approximateLocationLabel: "Maplewood",
     homeCommunityId: "",
     primaryCommunityId: undefined,
     serviceReach: "Local",
-    searchRadiusMiles: 5,
+    searchRadiusMiles: 20,
     remoteAvailable: false,
     locationUpdatedAt: "2026-09-05T00:00:00.000Z",
     communityAssignmentType: "manual",

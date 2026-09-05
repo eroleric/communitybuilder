@@ -1973,18 +1973,22 @@ function Workspace() {
                         <>
                           <Text style={s.label}>Comfortable travel radius</Text>
                           <View style={s.wrap}>
-                            {["2 miles", "5 miles", "10 miles", "25 miles"].map(
-                              (x) => (
-                                <Chip
-                                  key={x}
-                                  label={x}
-                                  active={profile.radius === x}
-                                  onPress={() =>
-                                    setProfile({ ...profile, radius: x })
-                                  }
-                                />
-                              ),
-                            )}
+                            {[
+                              "5 miles",
+                              "10 miles",
+                              "20 miles",
+                              "30 miles",
+                              "50 miles",
+                            ].map((x) => (
+                              <Chip
+                                key={x}
+                                label={x}
+                                active={profile.radius === x}
+                                onPress={() =>
+                                  setProfile({ ...profile, radius: x })
+                                }
+                              />
+                            ))}
                           </View>
                         </>
                       )}

@@ -37,22 +37,32 @@ export function NeighborDiscovery({
   const [filter, setFilter] = useState(false);
   const [category, setCategory] = useState("All services");
   const [saved, setSaved] = useState(false);
-  const [distance, setDistance] = useState(0);
+  const defaultRadius = 20;
+  const [distance, setDistance] = useState(defaultRadius);
   const [available, setAvailable] = useState("Any time");
   const [remote, setRemote] = useState(false);
   const reciprocal = (m: Member) =>
     m.wants.some((w) => state.profile.skills.includes(w)) &&
     state.profile.wants.some((wanted) => m.offers.includes(wanted));
+  const isRemoteOffer = (member: Member, offer: string) =>
+    member.offerReach[offer] === "Remote" ||
+    member.offerReach[offer] === "Local & Remote";
+  const reachableOffers = (member: Member) =>
+    member.offers.filter(
+      (offer) => member.distance <= distance || isRemoteOffer(member, offer),
+    );
   const list = members
     .filter(
       (m) =>
         !state.blocked.includes(m.id) &&
         (!saved || state.saved.includes(m.id)) &&
-        (category === "All services" || m.offers.includes(category)) &&
-        (!distance || m.distance <= distance || m.remote) &&
+        (category === "All services"
+          ? reachableOffers(m).length > 0
+          : reachableOffers(m).includes(category)) &&
         (available === "Any time" || m.available === available) &&
-        (!remote || m.remote) &&
-        `${m.name} ${m.offers.join(" ")} ${m.examples.join(" ")} ${m.interests.join(" ")}`
+        (!remote ||
+          reachableOffers(m).some((offer) => isRemoteOffer(m, offer))) &&
+        `${m.name} ${reachableOffers(m).join(" ")} ${m.examples.join(" ")} ${m.interests.join(" ")}`
           .toLowerCase()
           .includes(query.toLowerCase()),
     )
@@ -65,7 +75,9 @@ export function NeighborDiscovery({
             member.communityIds.includes(state.profile.primaryCommunityId),
         ) *
           2 -
-        (member.remote ? 0 : member.distance);
+        (reachableOffers(member).some((offer) => isRemoteOffer(member, offer))
+          ? 0
+          : member.distance);
       return score(b) - score(a);
     });
   const serviceOptions = [
@@ -145,10 +157,10 @@ export function NeighborDiscovery({
         <Card style={{ gap: 15 }}>
           <Text style={s.bold}>A few preferences</Text>
           <View style={s.wrap}>
-            {[0, 2, 5, 10].map((x) => (
+            {[5, 10, 20, 30, 50].map((x) => (
               <Chip
                 key={x}
-                label={x ? `Within ${x} miles` : "Any distance"}
+                label={`Within ${x} miles`}
                 active={distance === x}
                 onPress={() => setDistance(x)}
               />
@@ -166,7 +178,7 @@ export function NeighborDiscovery({
           </View>
           <View style={s.wrap}>
             <Chip
-              label="Remote available"
+              label="Remote services"
               active={remote}
               onPress={() => setRemote(!remote)}
             />
@@ -185,7 +197,7 @@ export function NeighborDiscovery({
             onPress={() => {
               setCategory("All services");
               setAvailable("Any time");
-              setDistance(0);
+              setDistance(defaultRadius);
               setRemote(false);
             }}
           />
@@ -197,7 +209,7 @@ export function NeighborDiscovery({
             {saved ? "People you saved" : "Capable people nearby"}
           </Text>
           <Text style={s.small}>
-            {list.length} sample neighbors · {state.profile.area}
+            {list.length} people · local within {distance} miles + remote
           </Text>
         </View>
         <Pressable
@@ -261,9 +273,12 @@ export function NeighborDiscovery({
               <View style={{ gap: 8 }}>
                 <Text style={s.eyebrow}>CAN HELP WITH</Text>
                 <View style={s.wrap}>
-                  {m.offers.map((offer) => (
+                  {reachableOffers(m).map((offer) => (
                     <View style={s.serviceTag} key={offer}>
-                      <Text style={s.serviceTagText}>{offer}</Text>
+                      <Text style={s.serviceTagText}>
+                        {offer}
+                        {isRemoteOffer(m, offer) ? " · Remote" : ""}
+                      </Text>
                     </View>
                   ))}
                 </View>
@@ -325,7 +340,7 @@ export function NeighborDiscovery({
                 setQuery("");
                 setCategory("All services");
                 setAvailable("Any time");
-                setDistance(0);
+                setDistance(defaultRadius);
                 setRemote(false);
                 setSaved(false);
               }}

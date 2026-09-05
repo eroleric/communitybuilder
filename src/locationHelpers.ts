@@ -9,7 +9,7 @@ const knownLocations: Array<{
     result: {
       latitude: 40.7312,
       longitude: -74.2714,
-      approximateLocationLabel: "Maplewood, NJ",
+      approximateLocationLabel: "Maplewood",
       source: "demo-geocode",
     },
   },
@@ -18,7 +18,7 @@ const knownLocations: Array<{
     result: {
       latitude: 33.608,
       longitude: -81.72,
-      approximateLocationLabel: "North Aiken, SC",
+      approximateLocationLabel: "North Aiken",
       source: "demo-geocode",
     },
   },
@@ -27,7 +27,7 @@ const knownLocations: Array<{
     result: {
       latitude: 33.5604,
       longitude: -81.7196,
-      approximateLocationLabel: "Aiken, SC",
+      approximateLocationLabel: "Aiken",
       source: "demo-geocode",
     },
   },
@@ -45,7 +45,8 @@ export const resolveApproximateLocation = (
   return {
     latitude: 33.66,
     longitude: -81.82,
-    approximateLocationLabel: input.trim() || "Approximate area",
+    approximateLocationLabel:
+      input.trim().split(",")[0].trim() || "Approximate area",
     source: "regional-fallback",
   };
 };
