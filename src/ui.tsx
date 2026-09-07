@@ -215,7 +215,7 @@ export function Empty({
   );
 }
 export const s = StyleSheet.create({
-  root: { flex: 1, backgroundColor: "#EEF4EF" },
+  root: { flex: 1, height: "100%", backgroundColor: "#EEF4EF" },
   row: {
     flexDirection: "row",
     alignItems: "center",

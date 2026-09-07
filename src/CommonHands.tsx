@@ -406,7 +406,7 @@ function Workspace() {
       </View>
     );
   return (
-    <View style={{ flex: 1, flexDirection: "row" }}>
+    <View style={{ flex: 1, height: "100%", flexDirection: "row" }}>
       {desktop && (
         <View style={s.sidebar}>
           <Pressable
@@ -483,6 +483,7 @@ function Workspace() {
           flex: 1,
           width: "100%",
           maxWidth: 600,
+          height: "100%",
           alignSelf: "center",
           backgroundColor: C.paper,
         }}
@@ -500,8 +501,10 @@ function Workspace() {
           </View>
         )}
         <ScrollView
+          style={{ flex: 1 }}
           contentContainerStyle={[s.content, { padding: desktop ? 34 : 16 }]}
           keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator
         >
           <View style={[s.between, s.topbar]}>
             <View style={{ gap: 2 }}>
