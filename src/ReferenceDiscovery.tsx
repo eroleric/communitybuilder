@@ -333,16 +333,16 @@ export function ReferenceDiscovery({
               </View>
               <View style={{ padding: 11, gap: 7 }}>
                 <View style={[s.between, { flexWrap: "nowrap" }]}>
-                  <Pressable accessibilityRole="button" onPress={() => onOpen(member)}><Text style={[s.bold, { fontSize: 16 }]} numberOfLines={1}>{member.name}</Text></Pressable>
-                  <View style={[s.row, { gap: 4, flexShrink: 0 }]}><Icon name="map-pin" size={12} color="#52677B" /><Text style={s.small}>{member.distance.toFixed(1)} mi</Text></View>
+                  <Pressable accessibilityRole="button" onPress={() => onOpen(member)} style={{ flex: 1, minWidth: 0 }}><Text style={[s.bold, { fontSize: 16 }]} numberOfLines={1}>{member.name}</Text></Pressable>
+                  <View style={[s.row, { gap: 4, flexShrink: 0 }]}>
+                    <Text style={{ color: "#F2A900", fontSize: 16 }}>★</Text>
+                    <Text style={[s.small, { color: C.ink }]}>{(4.6 + Math.min(member.karma, 40) / 100).toFixed(1)} ({member.trades})</Text>
+                  </View>
                 </View>
-                <View style={[s.row, { gap: 5 }]}>
-                  <Text style={{ color: "#F2A900", fontSize: 16 }}>★</Text>
-                  <Text style={[s.small, { color: C.ink }]}>{(4.6 + Math.min(member.karma, 40) / 100).toFixed(1)} ({member.trades})</Text>
-                </View>
-                <View style={[s.row, { gap: 5 }]}>
+                <View style={[s.row, { gap: 5, flexWrap: "nowrap" }]}>
                   <Icon name="users" size={13} color="#3F7C65" />
-                  <Text style={s.small} numberOfLines={1}>{state.communities.find((community) => community.id === member.communityId)?.name || member.locationLabel}</Text>
+                  <Text style={[s.small, { flex: 1 }]} numberOfLines={1}>{state.communities.find((community) => community.id === member.communityId)?.name || member.locationLabel}</Text>
+                  <View style={[s.row, { gap: 4, flexShrink: 0 }]}><Icon name="map-pin" size={12} color="#52677B" /><Text style={s.small}>{member.distance.toFixed(1)} mi</Text></View>
                 </View>
                 {[
                   ["Helps:", member.offers, "#E7F5EC", "#164F3E"],
@@ -352,7 +352,7 @@ export function ReferenceDiscovery({
                   const values = items as string[];
                   return (
                     <View key={label as string} style={[s.row, { gap: 5, alignItems: "center" }]}>
-                      <Text style={[s.small, { width: 52, color: C.ink, fontWeight: "600" }]}>{label as string}</Text>
+                      <Text style={[s.small, { width: 65, flexShrink: 0, color: C.ink, fontWeight: "600" }]} numberOfLines={1}>{label as string}</Text>
                       <View style={[s.row, { flex: 1, gap: 4, overflow: "hidden" }]}>
                         {values.slice(0, 2).map((value) => (
                           <View key={value} style={{ maxWidth: 75, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12, backgroundColor: backgroundColor as string }}>
