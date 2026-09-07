@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Feather } from "@expo/vector-icons";
 import {
+  Image,
   Pressable,
   StyleSheet,
   Text,
@@ -28,6 +29,38 @@ export const Icon = ({
   size?: number;
   color?: string;
 }) => <Feather name={name} size={size} color={color} />;
+export function PhotoAvatar({
+  index,
+  size = 58,
+}: {
+  index: 0 | 1 | 2;
+  size?: number;
+}) {
+  return (
+    <View
+      style={{
+        width: size,
+        height: size,
+        borderRadius: size / 2,
+        overflow: "hidden",
+        backgroundColor: C.pale,
+        flexShrink: 0,
+      }}
+    >
+      <Image
+        source={require("../assets/member-portraits.png")}
+        resizeMode="stretch"
+        style={{
+          position: "absolute",
+          width: size * 3,
+          height: size,
+          left: -index * size,
+          top: 0,
+        }}
+      />
+    </View>
+  );
+}
 export function Button({
   label,
   onPress,
@@ -379,7 +412,7 @@ export const s = StyleSheet.create({
   },
   capabilitySection: {
     gap: 10,
-    padding: 14,
+    padding: 11,
     borderRadius: 15,
     backgroundColor: "#F0F7F2",
     borderWidth: 1,
@@ -387,7 +420,7 @@ export const s = StyleSheet.create({
   },
   requestSection: {
     gap: 10,
-    padding: 14,
+    padding: 11,
     borderRadius: 15,
     backgroundColor: "#FBF6EC",
     borderWidth: 1,
@@ -677,7 +710,7 @@ export const s = StyleSheet.create({
     marginBottom: 8,
   },
   search: {
-    width: "100%",
+    flex: 1,
     minWidth: 0,
     flexDirection: "row",
     alignItems: "center",
@@ -692,6 +725,19 @@ export const s = StyleSheet.create({
     shadowOpacity: 0.06,
     shadowRadius: 16,
     elevation: 3,
+  },
+  filterButton: {
+    width: 54,
+    height: 54,
+    borderRadius: 18,
+    backgroundColor: "#D8F3E2",
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#174B38",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 2,
   },
   searchInput: {
     flex: 1,

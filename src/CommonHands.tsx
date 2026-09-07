@@ -25,6 +25,7 @@ import {
   Note,
   Empty,
   PageIntro,
+  PhotoAvatar,
 } from "./ui";
 import {
   members,
@@ -84,10 +85,8 @@ export default function CommonHands() {
   );
 }
 function Workspace() {
-  useWindowDimensions();
-  // Keep the web experience in the focused, phone-like community feed shown in
-  // the product direction while still allowing every screen to scroll naturally.
-  const desktop = false;
+  const { width } = useWindowDimensions();
+  const desktop = width >= 980;
   const [state, setState] = useState<State>(initialState);
   const [ready, setReady] = useState(false);
   const [storageOK, setStorageOK] = useState(true);
@@ -482,7 +481,7 @@ function Workspace() {
         style={{
           flex: 1,
           width: "100%",
-          maxWidth: 600,
+          maxWidth: desktop ? undefined : 600,
           height: "100%",
           alignSelf: "center",
           backgroundColor: C.paper,
@@ -502,7 +501,10 @@ function Workspace() {
         )}
         <ScrollView
           style={{ flex: 1 }}
-          contentContainerStyle={[s.content, { padding: desktop ? 34 : 16 }]}
+          contentContainerStyle={[
+            s.content,
+            { padding: desktop ? 34 : 16, maxWidth: desktop ? 1200 : 600 },
+          ]}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator
         >
@@ -550,11 +552,7 @@ function Workspace() {
                 onPress={() => go("My profile")}
                 style={s.avatar}
               >
-                <Text style={s.bold}>
-                  {state.profile.onboarded
-                    ? initials(state.profile.name)
-                    : "You"}
-                </Text>
+                <PhotoAvatar index={2} size={45} />
               </Pressable>
               {desktop && (
                 <Pressable

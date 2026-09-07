@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import {
-  ImageBackground,
+  Image,
   Pressable,
   ScrollView,
   Text,
@@ -17,8 +17,7 @@ import {
   workStyles,
   skills,
 } from "./data";
-import { s, C, Icon, Button, Chip, Card, Field, Empty } from "./ui";
-import { getCommunity } from "./communityData";
+import { s, C, Icon, Button, Chip, Card, Field, Empty, PhotoAvatar } from "./ui";
 
 export function NeighborDiscovery({
   state,
@@ -37,7 +36,9 @@ export function NeighborDiscovery({
   onMessage: (m: Member) => void;
   onHelp: () => void;
 }) {
-  const wide = useWindowDimensions().width >= 980;
+  const { width } = useWindowDimensions();
+  const wide = width >= 980;
+  const roomy = width >= 480;
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState(false);
   const [category, setCategory] = useState("All services");
@@ -73,6 +74,14 @@ export function NeighborDiscovery({
           .includes(query.toLowerCase()),
     )
     .sort((a, b) => {
+      const featuredOrder: Record<string, number> = {
+        leila: 30,
+        marcus: 20,
+        sofia: 10,
+        amara: 0,
+        james: 0,
+        daniel: 0,
+      };
       const score = (member: Member) =>
         Number(reciprocal(member)) * 100 +
         Number(member.available === "This week") * 4 +
@@ -83,7 +92,10 @@ export function NeighborDiscovery({
           2 -
         (reachableOffers(member).some((offer) => isRemoteOffer(member, offer))
           ? 0
-          : member.distance);
+          : member.distance) +
+        (category === "All services" && !query && !saved
+          ? featuredOrder[member.id] || 0
+          : 0);
       return score(b) - score(a);
     });
   const serviceOptions = [
@@ -101,23 +113,31 @@ export function NeighborDiscovery({
   ];
   return (
     <View style={{ gap: wide ? 30 : 22 }}>
-      <ImageBackground
-        source={require("../assets/community-hero.png")}
-        resizeMode="cover"
-        imageStyle={{ borderRadius: 24 }}
+      <View
         style={{
-          minHeight: wide ? 370 : 252,
+          minHeight: wide ? 360 : 260,
           borderRadius: 24,
           overflow: "hidden",
         }}
       >
+        <Image
+          source={require("../assets/community-hero-v2.png")}
+          resizeMode="stretch"
+          style={{
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+            left: 0,
+            top: 0,
+          }}
+        />
         <View
           style={{
             flex: 1,
             padding: wide ? 34 : 20,
             justifyContent: "center",
             gap: 14,
-            backgroundColor: "rgba(5,38,27,.18)",
+            backgroundColor: "rgba(3,38,26,.26)",
           }}
         >
           <Text style={[s.eyebrow, { color: "#CDEAD5" }]}>
@@ -130,7 +150,7 @@ export function NeighborDiscovery({
                 color: "#fff",
                 fontSize: wide ? 48 : 31,
                 lineHeight: wide ? 53 : 34,
-                maxWidth: 520,
+                maxWidth: wide ? 520 : 330,
               },
             ]}
           >
@@ -166,35 +186,52 @@ export function NeighborDiscovery({
               </Text>
             </Pressable>
           </View>
+          <View
+            style={{
+              position: "absolute",
+              right: 12,
+              bottom: 12,
+              width: 132,
+              paddingHorizontal: 14,
+              paddingVertical: 10,
+              borderRadius: 18,
+              backgroundColor: "rgba(255,255,255,.9)",
+            }}
+          >
+            <Text style={[s.bold, { color: C.green }]}>1,250+</Text>
+            <Text style={[s.small, { lineHeight: 16 }]}>neighbours helping each other</Text>
+          </View>
         </View>
-      </ImageBackground>
+      </View>
       <View style={{ gap: 12 }}>
-        <View style={s.search}>
-          <Icon name="search" />
-          <TextInput
-            accessibilityLabel="Search skills, people, or interests"
-            style={s.searchInput}
-            value={query}
-            onChangeText={setQuery}
-            placeholder="What skill or help are you looking for?"
-            placeholderTextColor="#7e887f"
-          />
-          {!!query && (
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Clear search"
-              onPress={() => setQuery("")}
-              style={s.iconButton}
-            >
-              <Icon name="x" />
-            </Pressable>
-          )}
+        <View style={[s.row, { alignItems: "stretch" }]}>
+          <View style={s.search}>
+            <Icon name="search" />
+            <TextInput
+              accessibilityLabel="Search skills, people, or interests"
+              style={s.searchInput}
+              value={query}
+              onChangeText={setQuery}
+              placeholder="What skill or help are you looking for?"
+              placeholderTextColor="#7e887f"
+            />
+            {!!query && (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Clear search"
+                onPress={() => setQuery("")}
+                style={s.iconButton}
+              >
+                <Icon name="x" />
+              </Pressable>
+            )}
+          </View>
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Show filters"
             accessibilityState={{ expanded: filter }}
             onPress={() => setFilter(!filter)}
-            style={s.iconButton}
+            style={s.filterButton}
           >
             <Icon name="sliders" />
           </Pressable>
@@ -299,35 +336,26 @@ export function NeighborDiscovery({
           return (
             <Card
               key={m.id}
-              style={{ width: "100%", gap: 13, padding: wide ? 22 : 16 }}
+              style={{ width: "100%", gap: 10, padding: wide ? 20 : 14 }}
             >
               <View style={s.row}>
-                <View
-                  style={[
-                    s.avatar,
-                    {
-                      backgroundColor: m.color,
-                      width: 58,
-                      height: 58,
-                      borderRadius: 29,
-                    },
-                  ]}
-                >
-                  <Text style={s.h3}>{m.initials}</Text>
-                </View>
+                {m.id === "leila" || m.id === "marcus" || m.id === "sofia" ? (
+                  <PhotoAvatar
+                    index={m.id === "leila" ? 0 : m.id === "marcus" ? 1 : 2}
+                    size={58}
+                  />
+                ) : (
+                  <View style={[s.avatar, { backgroundColor: m.color, width: 58, height: 58, borderRadius: 29 }]}>
+                    <Text style={s.h3}>{m.initials}</Text>
+                  </View>
+                )}
                 <View style={{ flex: 1 }}>
                   <View style={s.row}>
                     <Text style={s.h3}>{m.name}</Text>
                     <Icon name="check-circle" size={16} color="#27956A" />
                   </View>
                   <Text style={s.small}>
-                    {m.locationLabel} ·{" "}
-                    {state.profile.primaryCommunityId &&
-                    m.communityId === state.profile.primaryCommunityId
-                      ? `Your community · ${getCommunity(state.profile.primaryCommunityId, state.communities)?.name}`
-                      : getCommunity(m.communityId, state.communities)
-                        ? `${getCommunity(m.communityId, state.communities)?.name} · Level ${getCommunity(m.communityId, state.communities)?.level}`
-                        : "Independent member"}
+                    {m.locationLabel} · {m.distance.toFixed(1)} mi
                   </Text>
                 </View>
                 <View style={{ gap: 7, alignItems: "flex-end" }}>
@@ -381,7 +409,7 @@ export function NeighborDiscovery({
                   </Text>
                 </View>
               </View>
-              <View style={{ flexDirection: wide ? "row" : "column", gap: 10 }}>
+              <View style={{ flexDirection: roomy ? "row" : "column", gap: 10 }}>
                 <View style={[s.capabilitySection, { flex: 1 }]}>
                   <View style={s.sectionHeader}>
                     <Icon name="tool" size={15} color={C.green} />
@@ -402,7 +430,7 @@ export function NeighborDiscovery({
                 </View>
                 <View style={[s.requestSection, { flex: 1 }]}>
                   <View style={s.sectionHeader}>
-                    <Icon name="search" size={15} color="#805D2A" />
+                    <Icon name="heart" size={15} color="#D45A4D" />
                     <Text style={[s.eyebrow, s.requestEyebrow]}>
                       COULD USE HELP WITH
                     </Text>
@@ -416,9 +444,14 @@ export function NeighborDiscovery({
                   </View>
                 </View>
               </View>
-              <Text style={[s.body, { color: C.muted }]} numberOfLines={2}>
-                {m.about}
-              </Text>
+              <View style={[s.between, { alignItems: "center" }]}>
+                <Pressable accessibilityRole="button" onPress={() => onOpen(m)} style={{ flex: 1 }}>
+                  <Text style={[s.body, { color: C.muted }]} numberOfLines={2}>
+                    {m.about}
+                  </Text>
+                </Pressable>
+                <Button label="Message" onPress={() => onMessage(m)} />
+              </View>
               {reciprocal(m) && (
                 <View style={s.match}>
                   <Icon name="repeat" size={15} />
@@ -436,16 +469,6 @@ export function NeighborDiscovery({
                   </Text>
                 </View>
               )}
-              <View style={s.between}>
-                <Pressable accessibilityRole="button" onPress={() => onOpen(m)}>
-                  <Text style={s.link}>View profile →</Text>
-                </Pressable>
-                <Button
-                  label="Message"
-                  icon="message-circle"
-                  onPress={() => onMessage(m)}
-                />
-              </View>
             </Card>
           );
         })}
@@ -470,7 +493,7 @@ export function NeighborDiscovery({
           }
         />
       )}
-      <View style={{ flexDirection: wide ? "row" : "column", gap: 14 }}>
+      <View style={{ flexDirection: roomy ? "row" : "column", gap: 14 }}>
         <Card style={{ flex: 1, gap: 12, backgroundColor: "#FFFAF0" }}>
           <View style={s.row}>
             <Icon name="zap" color="#C47A20" />
@@ -550,7 +573,7 @@ export function NeighborDiscovery({
               accessibilityRole="button"
               onPress={onCommunity}
               style={{
-                width: 190,
+                width: wide ? 190 : 142,
                 backgroundColor: "#fff",
                 borderWidth: 1,
                 borderColor: C.line,
@@ -558,21 +581,12 @@ export function NeighborDiscovery({
                 overflow: "hidden",
               }}
             >
-              <View
-                style={{
-                  height: 68,
-                  padding: 14,
-                  justifyContent: "flex-end",
-                  backgroundColor: ["#315E48", "#795B3B", "#547B58", "#50667A"][
-                    index % 4
-                  ],
-                }}
-              >
-                <Text
-                  style={{ color: "#fff", fontSize: 24, fontWeight: "800" }}
-                >
-                  {community.icon}
-                </Text>
+              <View style={{ height: 68, overflow: "hidden" }}>
+                <Image
+                  source={require("../assets/circle-thumbnails.png")}
+                  resizeMode="stretch"
+                  style={{ position: "absolute", width: 272, height: 68, left: -(index % 4) * 68, top: 0 }}
+                />
               </View>
               <View style={{ padding: 12, gap: 3 }}>
                 <Text style={s.bold}>{community.name}</Text>
