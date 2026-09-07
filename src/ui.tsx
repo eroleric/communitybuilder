@@ -605,7 +605,6 @@ export const s = StyleSheet.create({
   },
   softAction: {
     minHeight: 42,
-    paddingHorizontal: 13,
     borderRadius: 12,
     backgroundColor: "#FFFEFC",
     borderWidth: 1,

@@ -143,7 +143,7 @@ export function ReferenceDiscovery({
   const [category, setCategory] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [showAll, setShowAll] = useState(false);
-  const cardWidth = desktop ? 228 : 190;
+  const cardWidth = desktop ? 260 : 244;
   const visibleMembers = useMemo(() => {
     const term = `${query} ${category}`.trim().toLowerCase();
     const filtered = members.filter(
@@ -154,7 +154,7 @@ export function ReferenceDiscovery({
             .toLowerCase()
             .includes(term)),
     );
-    return showAll ? filtered : filtered.slice(0, desktop ? 5 : 4);
+    return showAll ? filtered : filtered.slice(0, 4);
   }, [category, desktop, query, showAll, state.blocked]);
 
   const offers = [
@@ -295,9 +295,12 @@ export function ReferenceDiscovery({
       </Pressable>
 
       <View style={{ gap: 12 }}>
-        <View style={[s.between, { flexWrap: "nowrap" }]}>
-          <Text style={[s.h2, { fontSize: 22 }]}>People Near You</Text>
-          <View style={s.row}>
+        <View style={[s.between, { flexWrap: desktop ? "nowrap" : "wrap" }]}>
+          <View style={[s.row, { flexWrap: "wrap", gap: 10 }]}>
+            <Text style={[s.h2, { fontSize: 22 }]}>People Near You</Text>
+            {desktop && <Text style={s.small}>Skilled neighbors and community members within 20 miles</Text>}
+          </View>
+          <View style={[s.row, { marginLeft: desktop ? "auto" : 0 }]}>
             <Icon name="map-pin" size={17} />
             <Text style={s.small}>Within 20 miles</Text>
             <Pressable accessibilityRole="button" onPress={() => setShowAll(!showAll)} style={[s.row, s.softAction]}>
@@ -308,34 +311,63 @@ export function ReferenceDiscovery({
         </View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 14, paddingBottom: 4 }}>
           {visibleMembers.map((member) => (
-            <View key={member.id} style={{ width: cardWidth, borderRadius: 17, overflow: "hidden", backgroundColor: "#fff", borderWidth: 1, borderColor: C.line, shadowColor: "#102219", shadowOpacity: .08, shadowRadius: 12, elevation: 3 }}>
-              <Pressable accessibilityRole="button" accessibilityLabel={`View ${member.name}`} onPress={() => onOpen(member)}>
-                <GridSpritePhoto
-                  source={require("../assets/member-portraits-grid.png")}
-                  columns={3}
-                  index={portraitIndex[member.id]}
-                  width={cardWidth}
-                  height={desktop ? 142 : 122}
-                  focalY={0.28}
-                />
-              </Pressable>
-              <Pressable accessibilityRole="button" accessibilityLabel={`${state.saved.includes(member.id) ? "Unsave" : "Save"} ${member.name}`} onPress={() => onSave(member.id)} style={{ position: "absolute", right: 9, top: 9, width: 32, height: 32, borderRadius: 16, backgroundColor: "#fff", alignItems: "center", justifyContent: "center" }}>
-                <Icon name="heart" size={18} color={state.saved.includes(member.id) ? "#C4493B" : C.green} />
-              </Pressable>
-              <View style={{ padding: 12, gap: 5 }}>
-                <View style={s.between}>
-                  <Pressable accessibilityRole="button" onPress={() => onOpen(member)}><Text style={s.bold}>● {member.name}</Text></Pressable>
-                  <Text style={s.small}>{member.distance.toFixed(1)} mi</Text>
+            <View key={member.id} style={{ width: cardWidth, borderRadius: 15, overflow: "hidden", backgroundColor: "#fff", borderWidth: 1, borderColor: C.line, shadowColor: "#102219", shadowOpacity: .08, shadowRadius: 12, elevation: 3 }}>
+              <View>
+                <Pressable accessibilityRole="button" accessibilityLabel={`View ${member.name}`} onPress={() => onOpen(member)}>
+                  <GridSpritePhoto
+                    source={require("../assets/member-portraits-grid.png")}
+                    columns={3}
+                    index={portraitIndex[member.id]}
+                    width={cardWidth}
+                    height={150}
+                    focalY={0.24}
+                  />
+                </Pressable>
+                <View style={{ position: "absolute", left: 10, bottom: 9, flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 13, backgroundColor: C.green }}>
+                  <View style={{ width: 7, height: 7, borderRadius: 4, backgroundColor: "#7EE2AD" }} />
+                  <Text style={{ color: "#fff", fontSize: 11, fontWeight: "700" }}>Online</Text>
                 </View>
-                <Text style={[s.body, { color: C.ink, lineHeight: 19 }]}>{member.skill}</Text>
-                <View style={s.row}>
+                <Pressable accessibilityRole="button" accessibilityLabel={`${state.saved.includes(member.id) ? "Unsave" : "Save"} ${member.name}`} onPress={() => onSave(member.id)} style={{ position: "absolute", right: 9, top: 9, width: 34, height: 34, borderRadius: 17, backgroundColor: "#fff", alignItems: "center", justifyContent: "center", shadowColor: "#102219", shadowOpacity: .12, shadowRadius: 5 }}>
+                  <Icon name="heart" size={18} color={state.saved.includes(member.id) ? "#C4493B" : "#18384A"} />
+                </Pressable>
+              </View>
+              <View style={{ padding: 11, gap: 7 }}>
+                <View style={[s.between, { flexWrap: "nowrap" }]}>
+                  <Pressable accessibilityRole="button" onPress={() => onOpen(member)}><Text style={[s.bold, { fontSize: 16 }]} numberOfLines={1}>{member.name}</Text></Pressable>
+                  <View style={[s.row, { gap: 4, flexShrink: 0 }]}><Icon name="map-pin" size={12} color="#52677B" /><Text style={s.small}>{member.distance.toFixed(1)} mi</Text></View>
+                </View>
+                <View style={[s.row, { gap: 5 }]}>
                   <Text style={{ color: "#F2A900", fontSize: 16 }}>★</Text>
-                  <Text style={s.small}>{(4.6 + Math.min(member.karma, 40) / 100).toFixed(1)} ({member.trades})</Text>
+                  <Text style={[s.small, { color: C.ink }]}>{(4.6 + Math.min(member.karma, 40) / 100).toFixed(1)} ({member.trades})</Text>
                 </View>
-                <View style={[s.wrap, { gap: 6 }]}>
-                  {member.wants.slice(0, 2).map((skill) => <View key={skill} style={{ paddingHorizontal: 9, paddingVertical: 5, borderRadius: 12, backgroundColor: "#EEF1F4" }}><Text style={s.small}>{skill}</Text></View>)}
+                <View style={[s.row, { gap: 5 }]}>
+                  <Icon name="users" size={13} color="#3F7C65" />
+                  <Text style={s.small} numberOfLines={1}>{state.communities.find((community) => community.id === member.communityId)?.name || member.locationLabel}</Text>
                 </View>
-                <Pressable accessibilityRole="button" onPress={() => onMessage(member)} style={{ marginTop: 3 }}><Text style={s.link}>Message →</Text></Pressable>
+                {[
+                  ["Helps:", member.offers, "#E7F5EC", "#164F3E"],
+                  ["Needs:", member.wants, "#FFF0E9", "#98452D"],
+                  ["Interested:", member.interests, "#EDF2F7", "#274257"],
+                ].map(([label, items, backgroundColor, color]) => {
+                  const values = items as string[];
+                  return (
+                    <View key={label as string} style={[s.row, { gap: 5, alignItems: "center" }]}>
+                      <Text style={[s.small, { width: 52, color: C.ink, fontWeight: "600" }]}>{label as string}</Text>
+                      <View style={[s.row, { flex: 1, gap: 4, overflow: "hidden" }]}>
+                        {values.slice(0, 2).map((value) => (
+                          <View key={value} style={{ maxWidth: 75, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12, backgroundColor: backgroundColor as string }}>
+                            <Text style={[s.small, { color: color as string, fontSize: 10 }]} numberOfLines={1}>{value}</Text>
+                          </View>
+                        ))}
+                        {values.length > 2 && <View style={{ paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12, backgroundColor: "#E8EEF4" }}><Text style={[s.small, { color: "#274257", fontSize: 10 }]}>+{values.length - 2}</Text></View>}
+                      </View>
+                    </View>
+                  );
+                })}
+                <Pressable accessibilityRole="button" onPress={() => onOpen(member)} style={[s.row, { marginTop: 3, minHeight: 42, justifyContent: "center", borderRadius: 12, backgroundColor: "#EAF5EF" }]}>
+                  <Text style={s.link}>View profile</Text>
+                  <Icon name="arrow-right" size={16} />
+                </Pressable>
               </View>
             </View>
           ))}
