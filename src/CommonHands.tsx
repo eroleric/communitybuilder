@@ -84,8 +84,10 @@ export default function CommonHands() {
   );
 }
 function Workspace() {
-  const { width } = useWindowDimensions();
-  const desktop = width >= 980;
+  useWindowDimensions();
+  // Keep the web experience in the focused, phone-like community feed shown in
+  // the product direction while still allowing every screen to scroll naturally.
+  const desktop = false;
   const [state, setState] = useState<State>(initialState);
   const [ready, setReady] = useState(false);
   const [storageOK, setStorageOK] = useState(true);
@@ -476,7 +478,15 @@ function Workspace() {
           </View>
         </View>
       )}
-      <View style={{ flex: 1 }}>
+      <View
+        style={{
+          flex: 1,
+          width: "100%",
+          maxWidth: 600,
+          alignSelf: "center",
+          backgroundColor: C.paper,
+        }}
+      >
         {!!toast && (
           <View accessibilityLiveRegion="polite" style={[s.toast, s.between]}>
             <Text style={[s.small, { flex: 1, color: C.ink }]}>{toast}</Text>
@@ -490,7 +500,7 @@ function Workspace() {
           </View>
         )}
         <ScrollView
-          contentContainerStyle={[s.content, { padding: desktop ? 34 : 20 }]}
+          contentContainerStyle={[s.content, { padding: desktop ? 34 : 16 }]}
           keyboardShouldPersistTaps="handled"
         >
           <View style={[s.between, s.topbar]}>
@@ -543,14 +553,16 @@ function Workspace() {
                     : "You"}
                 </Text>
               </Pressable>
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel="Trust and help"
-                onPress={() => setModal("help")}
-                style={s.iconButton}
-              >
-                <Icon name="shield" />
-              </Pressable>
+              {desktop && (
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Trust and help"
+                  onPress={() => setModal("help")}
+                  style={s.iconButton}
+                >
+                  <Icon name="shield" />
+                </Pressable>
+              )}
             </View>
           </View>
           {tab === "Discover" && (

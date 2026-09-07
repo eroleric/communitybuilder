@@ -11,12 +11,12 @@ import {
 } from "react-native";
 export type IconName = React.ComponentProps<typeof Feather>["name"];
 export const C = {
-  ink: "#17231D",
-  muted: "#617067",
-  green: "#19583C",
-  pale: "#EAF3ED",
-  line: "#DCE3DE",
-  paper: "#F6F7F4",
+  ink: "#11201A",
+  muted: "#66736C",
+  green: "#075A3F",
+  pale: "#E7F5EC",
+  line: "#DEE6E1",
+  paper: "#F6F9F5",
   gold: "#9A6D2F",
 };
 export const Icon = ({
@@ -215,7 +215,7 @@ export function Empty({
   );
 }
 export const s = StyleSheet.create({
-  root: { flex: 1, backgroundColor: C.paper },
+  root: { flex: 1, backgroundColor: "#EEF4EF" },
   row: {
     flexDirection: "row",
     alignItems: "center",
@@ -275,15 +275,14 @@ export const s = StyleSheet.create({
   navText: { fontSize: 14, color: C.muted, fontWeight: "600", flexShrink: 1 },
   content: {
     width: "100%",
-    maxWidth: 1200,
+    maxWidth: 600,
     alignSelf: "center",
     paddingBottom: 40,
   },
   topbar: {
-    paddingBottom: 20,
-    borderBottomWidth: 1,
-    borderColor: C.line,
-    marginBottom: 28,
+    paddingTop: 4,
+    paddingBottom: 14,
+    marginBottom: 0,
   },
   heading: {
     fontSize: 44,
@@ -292,22 +291,22 @@ export const s = StyleSheet.create({
     letterSpacing: -1.65,
     color: C.ink,
   },
-  h2: { fontSize: 22, fontWeight: "700", letterSpacing: -0.5, color: C.ink },
+  h2: { fontSize: 20, fontWeight: "800", letterSpacing: -0.45, color: C.ink },
   h3: { fontSize: 17, fontWeight: "700", color: C.ink, lineHeight: 24 },
   body: { fontSize: 15, lineHeight: 23, color: C.muted, letterSpacing: 0.05 },
   small: { fontSize: 12, lineHeight: 19, color: C.muted, letterSpacing: 0.08 },
   bold: { fontSize: 14, lineHeight: 21, fontWeight: "700", color: C.ink },
   card: {
     minWidth: 0,
-    padding: 21,
+    padding: 16,
     backgroundColor: "#FFFEFC",
     borderWidth: 1,
     borderColor: C.line,
-    borderRadius: 20,
+    borderRadius: 18,
     shadowColor: "#102219",
     shadowOffset: { width: 0, height: 7 },
-    shadowOpacity: 0.06,
-    shadowRadius: 18,
+    shadowOpacity: 0.07,
+    shadowRadius: 14,
     elevation: 3,
   },
   button: {
@@ -578,6 +577,7 @@ export const s = StyleSheet.create({
     backgroundColor: "#FFFEFC",
     borderWidth: 1,
     borderColor: C.line,
+    paddingHorizontal: 15,
   },
   match: {
     flexDirection: "row",
@@ -595,6 +595,14 @@ export const s = StyleSheet.create({
     height: 42,
     borderRadius: 13,
     backgroundColor: "#F1F5F2",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  sectionIcon: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: C.green,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -629,12 +637,12 @@ export const s = StyleSheet.create({
     borderColor: C.line,
     backgroundColor: "#FFFEFC",
     paddingTop: 7,
-    paddingBottom: 8,
+    paddingBottom: 10,
     paddingHorizontal: 12,
     gap: 6,
     shadowColor: "#102219",
     shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.08,
+    shadowOpacity: 0.1,
     shadowRadius: 14,
     elevation: 8,
   },

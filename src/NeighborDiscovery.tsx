@@ -42,6 +42,7 @@ export function NeighborDiscovery({
   const [filter, setFilter] = useState(false);
   const [category, setCategory] = useState("All services");
   const [saved, setSaved] = useState(false);
+  const [showAll, setShowAll] = useState(false);
   const defaultRadius = 20;
   const [distance, setDistance] = useState(defaultRadius);
   const [available, setAvailable] = useState("Any time");
@@ -105,7 +106,7 @@ export function NeighborDiscovery({
         resizeMode="cover"
         imageStyle={{ borderRadius: 24 }}
         style={{
-          minHeight: wide ? 370 : 340,
+          minHeight: wide ? 370 : 252,
           borderRadius: 24,
           overflow: "hidden",
         }}
@@ -113,7 +114,7 @@ export function NeighborDiscovery({
         <View
           style={{
             flex: 1,
-            padding: wide ? 34 : 24,
+            padding: wide ? 34 : 20,
             justifyContent: "center",
             gap: 14,
             backgroundColor: "rgba(5,38,27,.18)",
@@ -127,8 +128,8 @@ export function NeighborDiscovery({
               s.heading,
               {
                 color: "#fff",
-                fontSize: wide ? 48 : 36,
-                lineHeight: wide ? 53 : 41,
+                fontSize: wide ? 48 : 31,
+                lineHeight: wide ? 53 : 34,
                 maxWidth: 520,
               },
             ]}
@@ -138,8 +139,8 @@ export function NeighborDiscovery({
           <Text
             style={[s.body, { color: "#F0F7F2", maxWidth: 440, fontSize: 16 }]}
           >
-            Share what you know. Find a hand when you need one. Build real trust
-            close to home.
+            Share skills. Get help. Meet neighbours. Build a more self-reliant,
+            connected you.
           </Text>
           <View style={[s.wrap, { marginTop: 4 }]}>
             <Button
@@ -175,7 +176,7 @@ export function NeighborDiscovery({
             style={s.searchInput}
             value={query}
             onChangeText={setQuery}
-            placeholder="What could you use a hand with?"
+            placeholder="What skill or help are you looking for?"
             placeholderTextColor="#7e887f"
           />
           {!!query && (
@@ -267,26 +268,31 @@ export function NeighborDiscovery({
         </Card>
       )}
       <View style={s.between}>
-        <View style={{ gap: 4 }}>
-          <Text style={s.h2}>
-            {saved ? "People you saved" : "People nearby"}
-          </Text>
-          <Text style={s.small}>
-            {list.length} people · local within {distance} miles + remote
-          </Text>
+        <View style={[s.row, { alignItems: "flex-start", flex: 1 }]}>
+          <View style={s.sectionIcon}>
+            <Icon name="map-pin" size={18} color="#fff" />
+          </View>
+          <View style={{ gap: 2, flex: 1 }}>
+            <Text style={s.h2}>
+              {saved ? "People you saved" : "People nearby"}
+            </Text>
+            <Text style={s.small}>
+              {list.length} people within {distance} miles · Active this week
+            </Text>
+          </View>
         </View>
         <Pressable
           accessibilityRole="button"
-          accessibilityState={{ selected: saved }}
-          onPress={() => setSaved(!saved)}
+          accessibilityState={{ expanded: showAll }}
+          onPress={() => setShowAll(!showAll)}
           style={[s.row, s.softAction]}
         >
-          <Icon name="bookmark" size={16} />
-          <Text style={s.link}>{saved ? "Show everyone" : "Saved"}</Text>
+          <Text style={s.link}>{showAll ? "Show less" : "See all"}</Text>
+          <Icon name={showAll ? "arrow-up" : "arrow-right"} size={16} />
         </Pressable>
       </View>
       <View style={{ gap: 14 }}>
-        {list.map((m) => {
+        {(showAll ? list : list.slice(0, 3)).map((m) => {
           const common = m.interests.filter((x) =>
             state.profile.interests.includes(x),
           );
@@ -430,14 +436,9 @@ export function NeighborDiscovery({
                   </Text>
                 </View>
               )}
-              <View
-                style={[
-                  s.between,
-                  { borderTopWidth: 1, borderColor: C.line, paddingTop: 12 },
-                ]}
-              >
+              <View style={s.between}>
                 <Pressable accessibilityRole="button" onPress={() => onOpen(m)}>
-                  <Text style={s.link}>Review profile →</Text>
+                  <Text style={s.link}>View profile →</Text>
                 </Pressable>
                 <Button
                   label="Message"
