@@ -342,7 +342,7 @@ export function ReferenceDiscovery({
                   </View>
                 </View>
                 <Text style={[s.small, { color: C.muted, fontSize: 12.5 }]} numberOfLines={1}>
-                  {member.locationLabel} · {community?.name || "Independent neighbor"}{community ? ` · Level ${community.level}` : ""}
+                  {member.locationLabel} · {community?.name || "Independent neighbor"}
                 </Text>
                 {[
                   ["Helps:", member.offers, "#E7F5EC", "#164F3E"],
