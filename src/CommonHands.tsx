@@ -38,7 +38,8 @@ import {
   gifts,
 } from "./data";
 
-import { NeighborDiscovery, PersonalFields } from "./NeighborDiscovery";
+import { PersonalFields } from "./NeighborDiscovery";
+import { ReferenceDiscovery } from "./ReferenceDiscovery";
 import { getCommunity } from "./communityData";
 import { resolveApproximateLocation } from "./locationHelpers";
 import { CommunityHub } from "./CommunityHub";
@@ -509,21 +510,38 @@ function Workspace() {
           showsVerticalScrollIndicator
         >
           <View style={[s.between, s.topbar]}>
-            <View style={{ gap: 2 }}>
-              <Text style={desktop ? s.eyebrow : s.brand}>
-                {desktop ? pageTitle.toUpperCase() : "commonhands."}
-              </Text>
+            <View style={[!desktop && s.row, { gap: desktop ? 2 : 10 }]}>
               {!desktop && (
-                <Text style={[s.small, { color: C.green }]}>
-                  Real people. Brighter neighbours.
+                <View style={{ width: 46, height: 46, borderRadius: 15, backgroundColor: "#E1F2E7", alignItems: "center", justifyContent: "center" }}>
+                  <Icon name="users" size={27} />
+                </View>
+              )}
+              <View>
+                <Text style={desktop ? s.eyebrow : [s.brand, { fontSize: 29 }]}>
+                  {desktop ? pageTitle.toUpperCase() : "commonhands."}
+                </Text>
+              {!desktop && (
+                <Text style={[s.small, { color: C.ink, fontSize: 13 }]}>
+                  Skills. Support. Stronger Together.
                 </Text>
               )}
+              </View>
             </View>
             <View style={s.row}>
               {desktop && (
                 <View style={s.badge}>
                   <Text style={s.small}>Interactive demo</Text>
                 </View>
+              )}
+              {!desktop && (
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Search"
+                  onPress={() => notify("Use the search field below to find people and skills.")}
+                  style={[s.iconButton, { backgroundColor: "transparent" }]}
+                >
+                  <Icon name="search" size={24} color="#102334" />
+                </Pressable>
               )}
               {!desktop && (
                 <Pressable
@@ -567,7 +585,7 @@ function Workspace() {
             </View>
           </View>
           {tab === "Discover" && (
-            <NeighborDiscovery
+            <ReferenceDiscovery
               state={state}
               onOpen={openMember}
               onSave={toggleSaved}
@@ -1086,29 +1104,29 @@ function Workspace() {
           <View style={s.bottomNav}>
             {(
               [
-                ["Discover", "home"],
-                ["Community", "users"],
-                ["Post", "plus"],
-                ["Messages", "message-circle"],
-                ["My profile", "user"],
-              ] as [string, IconName][]
-            ).map(([name, i]) => (
+                ["Home", "Discover", "home"],
+                ["Explore", "Discover", "search"],
+                ["Post", "Post", "plus"],
+                ["Communities", "Community", "users"],
+                ["Profile", "My profile", "user"],
+              ] as [string, string, IconName][]
+            ).map(([label, target, i]) => (
               <Pressable
                 accessibilityRole="button"
-                key={name}
-                accessibilityLabel={name}
+                key={label}
+                accessibilityLabel={label}
                 onPress={() =>
-                  name === "Post" ? setModal("profile") : go(name)
+                  target === "Post" ? setModal("profile") : go(target)
                 }
                 style={[
                   s.mobileNav,
-                  tab === name && s.mobileSelected,
-                  name === "Post" && { marginTop: -22 },
+                  tab === target && label !== "Explore" && s.mobileSelected,
+                  target === "Post" && { marginTop: -22 },
                 ]}
               >
                 <View
                   style={
-                    name === "Post"
+                    target === "Post"
                       ? {
                           width: 50,
                           height: 50,
@@ -1126,23 +1144,23 @@ function Workspace() {
                 >
                   <Icon
                     name={i}
-                    size={name === "Post" ? 27 : 21}
+                    size={target === "Post" ? 27 : 23}
                     color={
-                      name === "Post"
+                      target === "Post"
                         ? "#fff"
-                        : tab === name
+                        : tab === target && label !== "Explore"
                           ? C.green
-                          : C.muted
+                          : "#183247"
                     }
                   />
                 </View>
                 <Text
                   style={[
                     s.mobileLabel,
-                    tab === name && { color: C.green, fontWeight: "800" },
+                    tab === target && label !== "Explore" && { color: C.green, fontWeight: "800" },
                   ]}
                 >
-                  {name === "My profile" ? "Profile" : name}
+                  {label}
                 </Text>
               </Pressable>
             ))}
