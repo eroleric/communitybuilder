@@ -75,6 +75,45 @@ function SpritePhoto({
   );
 }
 
+function GridSpritePhoto({
+  source,
+  columns,
+  index,
+  panelAspect = 1,
+  width,
+  height,
+  focalY = 0.5,
+}: {
+  source: any;
+  columns: number;
+  index: number;
+  panelAspect?: number;
+  width: number;
+  height: number;
+  focalY?: number;
+}) {
+  const row = Math.floor(index / columns);
+  const column = index % columns;
+  const panelHeight = width / panelAspect;
+  const rows = 2;
+  const excess = Math.max(0, panelHeight - height);
+  return (
+    <View style={{ width, height, overflow: "hidden" }}>
+      <Image
+        source={source}
+        resizeMode="stretch"
+        style={{
+          position: "absolute",
+          width: width * columns,
+          height: panelHeight * rows,
+          left: -column * width,
+          top: -row * panelHeight - excess * focalY,
+        }}
+      />
+    </View>
+  );
+}
+
 function SectionTitle({ title, action }: { title: string; action?: () => void }) {
   return (
     <View style={[s.between, { flexWrap: "nowrap" }]}>
@@ -140,8 +179,12 @@ export function ReferenceDiscovery({
     <View style={{ gap: desktop ? 28 : 20 }}>
       <View style={{ minHeight: desktop ? 370 : 286, borderRadius: 24, overflow: "hidden" }}>
         <Image
-          source={require("../assets/community-group-hero.png")}
-          resizeMode="cover"
+          source={
+            desktop
+              ? require("../assets/community-group-hero.png")
+              : require("../assets/community-group-hero-mobile.png")
+          }
+          resizeMode={desktop ? "cover" : "stretch"}
           style={{ position: "absolute", width: "100%", height: "100%", left: 0, top: 0 }}
         />
         <View
@@ -267,7 +310,14 @@ export function ReferenceDiscovery({
           {visibleMembers.map((member) => (
             <View key={member.id} style={{ width: cardWidth, borderRadius: 17, overflow: "hidden", backgroundColor: "#fff", borderWidth: 1, borderColor: C.line, shadowColor: "#102219", shadowOpacity: .08, shadowRadius: 12, elevation: 3 }}>
               <Pressable accessibilityRole="button" accessibilityLabel={`View ${member.name}`} onPress={() => onOpen(member)}>
-                <SpritePhoto source={require("../assets/member-portraits-six.png")} panels={6} index={portraitIndex[member.id]} width={cardWidth} height={desktop ? 142 : 122} panelAspect={0.5} />
+                <GridSpritePhoto
+                  source={require("../assets/member-portraits-grid.png")}
+                  columns={3}
+                  index={portraitIndex[member.id]}
+                  width={cardWidth}
+                  height={desktop ? 142 : 122}
+                  focalY={0.28}
+                />
               </Pressable>
               <Pressable accessibilityRole="button" accessibilityLabel={`${state.saved.includes(member.id) ? "Unsave" : "Save"} ${member.name}`} onPress={() => onSave(member.id)} style={{ position: "absolute", right: 9, top: 9, width: 32, height: 32, borderRadius: 16, backgroundColor: "#fff", alignItems: "center", justifyContent: "center" }}>
                 <Icon name="heart" size={18} color={state.saved.includes(member.id) ? "#C4493B" : C.green} />
@@ -316,7 +366,15 @@ export function ReferenceDiscovery({
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 12, paddingBottom: 4 }}>
           {state.communities.map((community, index) => (
             <Pressable key={community.id} accessibilityRole="button" onPress={onCommunity} style={{ width: desktop ? 210 : 154, borderRadius: 15, overflow: "hidden", backgroundColor: "#fff", borderWidth: 1, borderColor: C.line }}>
-              <SpritePhoto source={require("../assets/circle-thumbnails.png")} panels={4} index={index % 4} width={desktop ? 210 : 154} height={86} panelAspect={0.75} />
+              <GridSpritePhoto
+                source={require("../assets/community-thumbnails-grid.png")}
+                columns={2}
+                index={index % 4}
+                panelAspect={1.5}
+                width={desktop ? 210 : 154}
+                height={86}
+                focalY={0.45}
+              />
               <View style={{ padding: 10, gap: 3 }}><Text style={s.bold} numberOfLines={1}>{community.name}</Text><Text style={s.small}>{community.memberCount.toLocaleString()} members</Text></View>
             </Pressable>
           ))}
