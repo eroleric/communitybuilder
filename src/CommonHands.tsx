@@ -494,14 +494,42 @@ function Workspace() {
           keyboardShouldPersistTaps="handled"
         >
           <View style={[s.between, s.topbar]}>
-            <Text style={desktop ? s.eyebrow : s.brand}>
-              {desktop ? pageTitle.toUpperCase() : "commonhands."}
-            </Text>
+            <View style={{ gap: 2 }}>
+              <Text style={desktop ? s.eyebrow : s.brand}>
+                {desktop ? pageTitle.toUpperCase() : "commonhands."}
+              </Text>
+              {!desktop && (
+                <Text style={[s.small, { color: C.green }]}>
+                  Real people. Brighter neighbours.
+                </Text>
+              )}
+            </View>
             <View style={s.row}>
               {desktop && (
                 <View style={s.badge}>
                   <Text style={s.small}>Interactive demo</Text>
                 </View>
+              )}
+              {!desktop && (
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Notifications"
+                  onPress={() => notify("You're all caught up.")}
+                  style={s.iconButton}
+                >
+                  <Icon name="bell" />
+                  <View
+                    style={{
+                      position: "absolute",
+                      right: 7,
+                      top: 7,
+                      width: 8,
+                      height: 8,
+                      borderRadius: 4,
+                      backgroundColor: "#F05B45",
+                    }}
+                  />
+                </Pressable>
               )}
               <Pressable
                 accessibilityRole="button"
@@ -536,6 +564,11 @@ function Workspace() {
                   : openProfile()
               }
               onCommunity={() => go("Community")}
+              onHelp={() => setModal("help")}
+              onMessage={(selected) => {
+                setConversation(selected.id);
+                go("Messages");
+              }}
             />
           )}
           {tab === "My trades" && (
@@ -1038,17 +1071,65 @@ function Workspace() {
         </ScrollView>
         {!desktop && (
           <View style={s.bottomNav}>
-            {navigation.map(([name, i]) => (
+            {(
+              [
+                ["Discover", "home"],
+                ["Community", "users"],
+                ["Post", "plus"],
+                ["Messages", "message-circle"],
+                ["My profile", "user"],
+              ] as [string, IconName][]
+            ).map(([name, i]) => (
               <Pressable
                 accessibilityRole="button"
                 key={name}
                 accessibilityLabel={name}
-                onPress={() => go(name)}
-                style={[s.mobileNav, tab === name && s.mobileSelected]}
+                onPress={() =>
+                  name === "Post" ? setModal("profile") : go(name)
+                }
+                style={[
+                  s.mobileNav,
+                  tab === name && s.mobileSelected,
+                  name === "Post" && { marginTop: -22 },
+                ]}
               >
-                <Icon name={i} />
-                <Text style={s.mobileLabel}>
-                  {name === "My trades" ? "Trades" : name}
+                <View
+                  style={
+                    name === "Post"
+                      ? {
+                          width: 50,
+                          height: 50,
+                          borderRadius: 25,
+                          backgroundColor: C.green,
+                          alignItems: "center",
+                          justifyContent: "center",
+                          shadowColor: C.green,
+                          shadowOpacity: 0.25,
+                          shadowRadius: 8,
+                          elevation: 5,
+                        }
+                      : undefined
+                  }
+                >
+                  <Icon
+                    name={i}
+                    size={name === "Post" ? 27 : 21}
+                    color={
+                      name === "Post"
+                        ? "#fff"
+                        : tab === name
+                          ? C.green
+                          : C.muted
+                    }
+                  />
+                </View>
+                <Text
+                  style={[
+                    s.mobileLabel,
+                    tab === name && { color: C.green, fontWeight: "800" },
+                  ]}
+                >
+                  {name === "My profile" ? "Profile" : name}
                 </Text>
               </Pressable>
             ))}

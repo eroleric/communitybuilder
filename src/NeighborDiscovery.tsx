@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  ImageBackground,
   Pressable,
   ScrollView,
   Text,
@@ -25,12 +26,16 @@ export function NeighborDiscovery({
   onSave,
   onProfile,
   onCommunity,
+  onMessage,
+  onHelp,
 }: {
   state: State;
   onOpen: (m: Member) => void;
   onSave: (id: string) => void;
   onProfile: () => void;
   onCommunity: () => void;
+  onMessage: (m: Member) => void;
+  onHelp: () => void;
 }) {
   const wide = useWindowDimensions().width >= 980;
   const [query, setQuery] = useState("");
@@ -84,32 +89,84 @@ export function NeighborDiscovery({
     "All services",
     ...new Set(members.flatMap((member) => member.offers)),
   ];
+  const shortcuts: { label: string; value: string; icon: any }[] = [
+    { label: "All", value: "All services", icon: "grid" },
+    { label: "Tutoring", value: "Tutoring", icon: "book-open" },
+    { label: "Plumbing", value: "Plumbing", icon: "tool" },
+    { label: "Gardening", value: "Gardening", icon: "feather" },
+    { label: "Tech help", value: "Technical help", icon: "monitor" },
+    { label: "Pet care", value: "Pet care", icon: "heart" },
+    { label: "Home repairs", value: "Home repairs", icon: "home" },
+  ];
   return (
-    <View style={{ gap: 25 }}>
-      <View
-        style={[
-          s.heroPanel,
-          { gap: 12, padding: wide ? 32 : 22, marginTop: 2 },
-        ]}
+    <View style={{ gap: wide ? 30 : 22 }}>
+      <ImageBackground
+        source={require("../assets/community-hero.png")}
+        resizeMode="cover"
+        imageStyle={{ borderRadius: 24 }}
+        style={{
+          minHeight: wide ? 370 : 340,
+          borderRadius: 24,
+          overflow: "hidden",
+        }}
       >
-        <View style={s.heroMark} />
-        <Text style={[s.eyebrow, { color: "#C1D7A4" }]}>
-          PRACTICAL SKILLS. LOCAL INDEPENDENCE.
-        </Text>
-        <Text
-          style={[
-            s.heading,
-            s.introTitle,
-            { fontSize: wide ? 42 : 33, lineHeight: wide ? 49 : 40 },
-          ]}
+        <View
+          style={{
+            flex: 1,
+            padding: wide ? 34 : 24,
+            justifyContent: "center",
+            gap: 14,
+            backgroundColor: "rgba(5,38,27,.18)",
+          }}
         >
-          Build independence through{"\n"}people you trust.
-        </Text>
-        <Text style={[s.body, s.introBody, { maxWidth: 510 }]}>
-          Exchange practical skills. Build trust through action. Become more
-          self-reliant, together.
-        </Text>
-      </View>
+          <Text style={[s.eyebrow, { color: "#CDEAD5" }]}>
+            SKILLS · PEOPLE · STRONGER NEIGHBOURS
+          </Text>
+          <Text
+            style={[
+              s.heading,
+              {
+                color: "#fff",
+                fontSize: wide ? 48 : 36,
+                lineHeight: wide ? 53 : 41,
+                maxWidth: 520,
+              },
+            ]}
+          >
+            Good people build brighter communities.
+          </Text>
+          <Text
+            style={[s.body, { color: "#F0F7F2", maxWidth: 440, fontSize: 16 }]}
+          >
+            Share what you know. Find a hand when you need one. Build real trust
+            close to home.
+          </Text>
+          <View style={[s.wrap, { marginTop: 4 }]}>
+            <Button
+              label="Find people nearby"
+              icon="arrow-right"
+              onPress={() => setCategory("All services")}
+            />
+            <Pressable
+              accessibilityRole="button"
+              onPress={onHelp}
+              style={{
+                minHeight: 46,
+                paddingHorizontal: 18,
+                borderRadius: 14,
+                borderWidth: 1,
+                borderColor: "rgba(255,255,255,.7)",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text style={{ color: "#fff", fontWeight: "700" }}>
+                How it works
+              </Text>
+            </Pressable>
+          </View>
+        </View>
+      </ImageBackground>
       <View style={{ gap: 12 }}>
         <View style={s.search}>
           <Icon name="search" />
@@ -141,20 +198,23 @@ export function NeighborDiscovery({
             <Icon name="sliders" />
           </Pressable>
         </View>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ gap: 8 }}
-        >
-          {serviceOptions.map((x) => (
+        <View style={s.wrap}>
+          {shortcuts.map((x) => (
             <Chip
-              key={x}
-              label={x}
-              active={category === x}
-              onPress={() => setCategory(x)}
+              key={x.label}
+              label={x.label}
+              icon={x.icon}
+              active={category === x.value}
+              onPress={() => setCategory(x.value)}
             />
           ))}
-        </ScrollView>
+          <Chip
+            label="More"
+            icon="more-horizontal"
+            active={!shortcuts.some((x) => x.value === category)}
+            onPress={() => setFilter(true)}
+          />
+        </View>
       </View>
       {filter && (
         <Card style={{ gap: 15 }}>
@@ -185,7 +245,7 @@ export function NeighborDiscovery({
               active={remote}
               onPress={() => setRemote(!remote)}
             />
-            {skills.slice(5).map((x) => (
+            {serviceOptions.slice(1).map((x) => (
               <Chip
                 key={x}
                 label={x}
@@ -209,7 +269,7 @@ export function NeighborDiscovery({
       <View style={s.between}>
         <View style={{ gap: 4 }}>
           <Text style={s.h2}>
-            {saved ? "People you saved" : "Capable people nearby"}
+            {saved ? "People you saved" : "People nearby"}
           </Text>
           <Text style={s.small}>
             {list.length} people · local within {distance} miles + remote
@@ -225,7 +285,7 @@ export function NeighborDiscovery({
           <Text style={s.link}>{saved ? "Show everyone" : "Saved"}</Text>
         </Pressable>
       </View>
-      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 18 }}>
+      <View style={{ gap: 14 }}>
         {list.map((m) => {
           const common = m.interests.filter((x) =>
             state.profile.interests.includes(x),
@@ -233,12 +293,7 @@ export function NeighborDiscovery({
           return (
             <Card
               key={m.id}
-              style={{
-                width: wide ? "48.5%" : "100%",
-                gap: 17,
-                borderTopWidth: 3,
-                borderTopColor: "#C4D5C6",
-              }}
+              style={{ width: "100%", gap: 13, padding: wide ? 22 : 16 }}
             >
               <View style={s.row}>
                 <View
@@ -246,16 +301,19 @@ export function NeighborDiscovery({
                     s.avatar,
                     {
                       backgroundColor: m.color,
-                      width: 52,
-                      height: 52,
-                      borderRadius: 18,
+                      width: 58,
+                      height: 58,
+                      borderRadius: 29,
                     },
                   ]}
                 >
                   <Text style={s.h3}>{m.initials}</Text>
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={s.h3}>{m.name}</Text>
+                  <View style={s.row}>
+                    <Text style={s.h3}>{m.name}</Text>
+                    <Icon name="check-circle" size={16} color="#27956A" />
+                  </View>
                   <Text style={s.small}>
                     {m.locationLabel} ·{" "}
                     {state.profile.primaryCommunityId &&
@@ -266,59 +324,95 @@ export function NeighborDiscovery({
                         : "Independent member"}
                   </Text>
                 </View>
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityLabel={`${state.saved.includes(m.id) ? "Unsave" : "Save"} ${m.name}`}
-                  style={s.iconButton}
-                  onPress={() => onSave(m.id)}
-                >
-                  <Icon
-                    name="bookmark"
-                    color={state.saved.includes(m.id) ? C.gold : "#899386"}
-                  />
-                </Pressable>
+                <View style={{ gap: 7, alignItems: "flex-end" }}>
+                  <View
+                    style={{
+                      backgroundColor: "#E2F6E9",
+                      paddingHorizontal: 10,
+                      paddingVertical: 6,
+                      borderRadius: 999,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: C.green,
+                        fontSize: 11,
+                        fontWeight: "700",
+                      }}
+                    >
+                      ● Available
+                    </Text>
+                  </View>
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel={`${state.saved.includes(m.id) ? "Unsave" : "Save"} ${m.name}`}
+                    onPress={() => onSave(m.id)}
+                  >
+                    <Icon
+                      name="bookmark"
+                      size={18}
+                      color={state.saved.includes(m.id) ? C.gold : "#899386"}
+                    />
+                  </Pressable>
+                </View>
               </View>
-              <View style={s.capabilitySection}>
-                <View style={s.sectionHeader}>
-                  <Icon name="tool" size={15} color={C.green} />
-                  <Text style={[s.eyebrow, s.capabilityEyebrow]}>
-                    CAN HELP WITH
+              <View style={[s.wrap, { gap: 12 }]}>
+                <View style={s.row}>
+                  <Icon name="star" size={16} color="#D49A2D" />
+                  <Text style={s.small}>
+                    {(4.6 + Math.min(m.karma, 40) / 100).toFixed(1)} (
+                    {m.trades + m.karma})
                   </Text>
                 </View>
-                <View style={s.wrap}>
-                  {reachableOffers(m).map((offer) => (
-                    <View style={s.serviceTag} key={offer}>
-                      <Text style={s.serviceTagText}>
-                        {offer}
-                        {isRemoteOffer(m, offer) ? " · Remote" : ""}
-                      </Text>
-                    </View>
-                  ))}
-                </View>
-              </View>
-              <View style={s.requestSection}>
-                <View style={s.sectionHeader}>
-                  <Icon name="search" size={15} color="#805D2A" />
-                  <Text style={[s.eyebrow, s.requestEyebrow]}>
-                    COULD USE HELP WITH
+                <View style={s.row}>
+                  <Icon name="message-circle" size={15} />
+                  <Text style={s.small}>
+                    Usually responds within{" "}
+                    {m.id === "leila"
+                      ? "1"
+                      : Math.max(1, Math.round(m.distance))}
+                    h
                   </Text>
                 </View>
-                <View style={s.wrap}>
-                  {m.wants.map((wanted) => (
-                    <View style={s.needTag} key={wanted}>
-                      <Text style={s.needTagText}>{wanted}</Text>
-                    </View>
-                  ))}
+              </View>
+              <View style={{ flexDirection: wide ? "row" : "column", gap: 10 }}>
+                <View style={[s.capabilitySection, { flex: 1 }]}>
+                  <View style={s.sectionHeader}>
+                    <Icon name="tool" size={15} color={C.green} />
+                    <Text style={[s.eyebrow, s.capabilityEyebrow]}>
+                      CAN HELP WITH
+                    </Text>
+                  </View>
+                  <View style={s.wrap}>
+                    {reachableOffers(m).map((offer) => (
+                      <View style={s.serviceTag} key={offer}>
+                        <Text style={s.serviceTagText}>
+                          {offer}
+                          {isRemoteOffer(m, offer) ? " · Remote" : ""}
+                        </Text>
+                      </View>
+                    ))}
+                  </View>
+                </View>
+                <View style={[s.requestSection, { flex: 1 }]}>
+                  <View style={s.sectionHeader}>
+                    <Icon name="search" size={15} color="#805D2A" />
+                    <Text style={[s.eyebrow, s.requestEyebrow]}>
+                      COULD USE HELP WITH
+                    </Text>
+                  </View>
+                  <View style={s.wrap}>
+                    {m.wants.map((wanted) => (
+                      <View style={s.needTag} key={wanted}>
+                        <Text style={s.needTagText}>{wanted}</Text>
+                      </View>
+                    ))}
+                  </View>
                 </View>
               </View>
-              <View style={s.row}>
-                <Icon name="users" size={15} />
-                <Text style={[s.small, { flex: 1 }]}>
-                  {common.length
-                    ? `You both enjoy ${common.join(" & ").toLowerCase()}`
-                    : `Also into ${m.interests.slice(0, 2).join(" · ").toLowerCase()}`}
-                </Text>
-              </View>
+              <Text style={[s.body, { color: C.muted }]} numberOfLines={2}>
+                {m.about}
+              </Text>
               {reciprocal(m) && (
                 <View style={s.match}>
                   <Icon name="repeat" size={15} />
@@ -336,12 +430,19 @@ export function NeighborDiscovery({
                   </Text>
                 </View>
               )}
-              <View style={s.cardActions}>
+              <View
+                style={[
+                  s.between,
+                  { borderTopWidth: 1, borderColor: C.line, paddingTop: 12 },
+                ]}
+              >
+                <Pressable accessibilityRole="button" onPress={() => onOpen(m)}>
+                  <Text style={s.link}>Review profile →</Text>
+                </Pressable>
                 <Button
-                  label="Review profile"
-                  secondary
-                  icon="arrow-up-right"
-                  onPress={() => onOpen(m)}
+                  label="Message"
+                  icon="message-circle"
+                  onPress={() => onMessage(m)}
                 />
               </View>
             </Card>
@@ -368,6 +469,120 @@ export function NeighborDiscovery({
           }
         />
       )}
+      <View style={{ flexDirection: wide ? "row" : "column", gap: 14 }}>
+        <Card style={{ flex: 1, gap: 12, backgroundColor: "#FFFAF0" }}>
+          <View style={s.row}>
+            <Icon name="zap" color="#C47A20" />
+            <View>
+              <Text style={s.h3}>Happening now</Text>
+              <Text style={s.small}>Real activity from the community</Text>
+            </View>
+          </View>
+          {[
+            ["James asked for help with plumbing", "12 min ago · South Orange"],
+            ["Amara offered tutoring in math", "28 min ago · Maplewood"],
+            ["New pet-care request nearby", "1 hour ago · Maplewood"],
+          ].map(([title, meta]) => (
+            <View
+              key={title}
+              style={[
+                s.between,
+                { borderTopWidth: 1, borderColor: "#EAE2D2", paddingTop: 10 },
+              ]}
+            >
+              <View style={{ flex: 1 }}>
+                <Text style={s.bold}>{title}</Text>
+                <Text style={s.small}>{meta}</Text>
+              </View>
+              <Icon name="chevron-right" />
+            </View>
+          ))}
+        </Card>
+        <View
+          style={{
+            flex: 1,
+            borderRadius: 20,
+            backgroundColor: "#173D2E",
+            padding: 22,
+            justifyContent: "center",
+            gap: 10,
+          }}
+        >
+          <Icon name="sun" size={28} color="#CBEA9D" />
+          <Text style={[s.h2, { color: "#fff" }]}>
+            Small skills. Big impact.
+          </Text>
+          <Text style={[s.body, { color: "#D8E7DC" }]}>
+            Every useful connection makes the whole community more capable.
+          </Text>
+          <Button
+            label="Build your profile"
+            icon="arrow-right"
+            onPress={onProfile}
+          />
+        </View>
+      </View>
+      <View style={{ gap: 12 }}>
+        <View style={s.between}>
+          <View>
+            <Text style={s.h2}>Community circles</Text>
+            <Text style={s.small}>
+              Meet people who share your interests and values
+            </Text>
+          </View>
+          <Pressable
+            accessibilityRole="button"
+            onPress={onCommunity}
+            style={s.softAction}
+          >
+            <Text style={s.link}>See all →</Text>
+          </Pressable>
+        </View>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ gap: 12 }}
+        >
+          {state.communities.map((community, index) => (
+            <Pressable
+              key={community.id}
+              accessibilityRole="button"
+              onPress={onCommunity}
+              style={{
+                width: 190,
+                backgroundColor: "#fff",
+                borderWidth: 1,
+                borderColor: C.line,
+                borderRadius: 18,
+                overflow: "hidden",
+              }}
+            >
+              <View
+                style={{
+                  height: 68,
+                  padding: 14,
+                  justifyContent: "flex-end",
+                  backgroundColor: ["#315E48", "#795B3B", "#547B58", "#50667A"][
+                    index % 4
+                  ],
+                }}
+              >
+                <Text
+                  style={{ color: "#fff", fontSize: 24, fontWeight: "800" }}
+                >
+                  {community.icon}
+                </Text>
+              </View>
+              <View style={{ padding: 12, gap: 3 }}>
+                <Text style={s.bold}>{community.name}</Text>
+                <Text style={s.small}>
+                  {community.memberCount.toLocaleString()} members
+                </Text>
+              </View>
+            </Pressable>
+          ))}
+        </ScrollView>
+      </View>
       <View
         style={[
           s.between,
