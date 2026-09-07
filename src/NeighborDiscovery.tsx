@@ -270,8 +270,13 @@ export function NeighborDiscovery({
                   />
                 </Pressable>
               </View>
-              <View style={{ gap: 8 }}>
-                <Text style={s.eyebrow}>CAN HELP WITH</Text>
+              <View style={s.capabilitySection}>
+                <View style={s.sectionHeader}>
+                  <Icon name="tool" size={15} color={C.green} />
+                  <Text style={[s.eyebrow, s.capabilityEyebrow]}>
+                    CAN HELP WITH
+                  </Text>
+                </View>
                 <View style={s.wrap}>
                   {reachableOffers(m).map((offer) => (
                     <View style={s.serviceTag} key={offer}>
@@ -283,8 +288,13 @@ export function NeighborDiscovery({
                   ))}
                 </View>
               </View>
-              <View style={{ gap: 8 }}>
-                <Text style={s.eyebrow}>COULD USE HELP WITH</Text>
+              <View style={s.requestSection}>
+                <View style={s.sectionHeader}>
+                  <Icon name="search" size={15} color="#805D2A" />
+                  <Text style={[s.eyebrow, s.requestEyebrow]}>
+                    COULD USE HELP WITH
+                  </Text>
+                </View>
                 <View style={s.wrap}>
                   {m.wants.map((wanted) => (
                     <View style={s.needTag} key={wanted}>

@@ -1247,17 +1247,11 @@ function Workspace() {
                       karma does not certify workmanship.
                     </Text>
                   </View>
-                  <View
-                    style={[
-                      s.note,
-                      {
-                        flexDirection: "column",
-                        alignItems: "stretch",
-                        gap: 14,
-                      },
-                    ]}
-                  >
-                    <Text style={s.h3}>Can help with</Text>
+                  <View style={[s.capabilitySection, { gap: 14 }]}>
+                    <View style={s.sectionHeader}>
+                      <Icon name="tool" size={17} color={C.green} />
+                      <Text style={s.h3}>Can help with</Text>
+                    </View>
                     <View style={s.wrap}>
                       {member.offers.map((x) => (
                         <View key={x} style={s.serviceTag}>
@@ -1278,13 +1272,18 @@ function Workspace() {
                     <Text style={s.h3}>Working style</Text>
                     <Text style={s.body}>{member.workingStyle}</Text>
                   </View>
-                  <Text style={s.h3}>Could use help with</Text>
-                  <View style={s.wrap}>
-                    {member.wants.map((x) => (
-                      <View key={x} style={s.chip}>
-                        <Text style={s.chipText}>{x}</Text>
-                      </View>
-                    ))}
+                  <View style={s.requestSection}>
+                    <View style={s.sectionHeader}>
+                      <Icon name="search" size={17} color="#805D2A" />
+                      <Text style={s.h3}>Could use help with</Text>
+                    </View>
+                    <View style={s.wrap}>
+                      {member.wants.map((x) => (
+                        <View key={x} style={s.needTag}>
+                          <Text style={s.needTagText}>{x}</Text>
+                        </View>
+                      ))}
+                    </View>
                   </View>
                   <Text style={s.h3}>An exchange I’d consider</Text>
                   {member.exchangeIdeas.map((x) => (
