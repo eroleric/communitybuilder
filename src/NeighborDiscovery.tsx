@@ -93,16 +93,19 @@ export function NeighborDiscovery({
         ]}
       >
         <View style={s.heroMark} />
-        <Text style={s.eyebrow}>PRACTICAL SKILLS. LOCAL INDEPENDENCE.</Text>
+        <Text style={[s.eyebrow, { color: "#C1D7A4" }]}>
+          PRACTICAL SKILLS. LOCAL INDEPENDENCE.
+        </Text>
         <Text
           style={[
             s.heading,
+            s.introTitle,
             { fontSize: wide ? 42 : 33, lineHeight: wide ? 49 : 40 },
           ]}
         >
           Build independence through{"\n"}people you trust.
         </Text>
-        <Text style={[s.body, { maxWidth: 510 }]}>
+        <Text style={[s.body, s.introBody, { maxWidth: 510 }]}>
           Exchange practical skills. Build trust through action. Become more
           self-reliant, together.
         </Text>
@@ -230,7 +233,12 @@ export function NeighborDiscovery({
           return (
             <Card
               key={m.id}
-              style={{ width: wide ? "48.5%" : "100%", gap: 17 }}
+              style={{
+                width: wide ? "48.5%" : "100%",
+                gap: 17,
+                borderTopWidth: 3,
+                borderTopColor: "#C4D5C6",
+              }}
             >
               <View style={s.row}>
                 <View
@@ -328,12 +336,14 @@ export function NeighborDiscovery({
                   </Text>
                 </View>
               )}
-              <Button
-                label="Review profile"
-                secondary
-                icon="arrow-up-right"
-                onPress={() => onOpen(m)}
-              />
+              <View style={s.cardActions}>
+                <Button
+                  label="Review profile"
+                  secondary
+                  icon="arrow-up-right"
+                  onPress={() => onOpen(m)}
+                />
+              </View>
             </Card>
           );
         })}

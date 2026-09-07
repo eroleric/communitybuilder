@@ -1,5 +1,11 @@
 import React, { useMemo, useState } from "react";
-import { ScrollView, Text, TextInput, View } from "react-native";
+import {
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+  useWindowDimensions,
+} from "react-native";
 import {
   Community,
   CommunityMembership,
@@ -11,7 +17,7 @@ import {
 } from "./communityProgression";
 import { getCommunity } from "./communityData";
 import { Member, State, gifts } from "./data";
-import { Button, Card, Chip, C, Icon, Note, s } from "./ui";
+import { Button, Card, Chip, C, Icon, Note, PageIntro, s } from "./ui";
 
 const userId = "local-user";
 const fmt = (n: number) => n.toLocaleString();
@@ -27,6 +33,7 @@ export function CommunityHub({
   members: Member[];
   notify: (text: string) => void;
 }) {
+  const compact = useWindowDimensions().width < 980;
   const [section, setSection] = useState("Home");
   const [selectedId, setSelectedId] = useState<string>();
   const [detailTab, setDetailTab] = useState("Overview");
@@ -262,13 +269,15 @@ export function CommunityHub({
     community: Community;
     reason?: string;
   }) => (
-    <Card style={{ gap: 13 }}>
+    <Card style={{ gap: 17, borderTopWidth: 3, borderTopColor: "#B1C3A2" }}>
       <View style={s.between}>
-        <View style={s.row}>
-          <View style={[s.avatar, { backgroundColor: C.pale }]}>
-            <Text style={s.bold}>{community.icon}</Text>
+        <View style={s.communityIdentity}>
+          <View style={s.communityEmblem}>
+            <Text style={[s.bold, { color: "#FCF9EF", fontSize: 17 }]}>
+              {community.icon}
+            </Text>
           </View>
-          <View>
+          <View style={{ flex: 1, minWidth: 0 }}>
             <Text style={s.h3}>{community.name}</Text>
             <Text style={s.small}>
               Level {community.level} · {fmt(community.memberCount)} members
@@ -295,7 +304,7 @@ export function CommunityHub({
           </View>
         ))}
       </View>
-      <View style={s.wrap}>
+      <View style={[s.wrap, s.cardActions]}>
         <Button
           label="View community"
           secondary
@@ -342,7 +351,11 @@ export function CommunityHub({
               <Text style={s.h3}>{selected.icon}</Text>
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={s.heading}>{selected.name}</Text>
+              <Text
+                style={[s.heading, compact && { fontSize: 29, lineHeight: 35 }]}
+              >
+                {selected.name}
+              </Text>
               <Text style={s.body}>
                 Level {selected.level} · {fmt(selected.memberCount)} members ·{" "}
                 {fmt(selected.stats.confirmedContributions)} confirmed
@@ -550,13 +563,11 @@ export function CommunityHub({
 
   return (
     <View style={{ gap: 20 }}>
-      <View>
-        <Text style={s.heading}>Communities</Text>
-        <Text style={s.body}>
-          Find people you want to build with. Location helps with physical work;
-          belonging is always your choice.
-        </Text>
-      </View>
+      <PageIntro
+        title="Communities"
+        icon="users"
+        text="Find people you want to build with. Location helps with physical work; belonging is always your choice."
+      />
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}

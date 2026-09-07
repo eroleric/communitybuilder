@@ -24,6 +24,7 @@ import {
   Field,
   Note,
   Empty,
+  PageIntro,
 } from "./ui";
 import {
   members,
@@ -378,12 +379,17 @@ function Workspace() {
   );
   const pageTitle = tab === "Discover" ? "Discover your people" : tab;
   const heading = (title: string, text: string) => (
-    <View style={{ gap: 10, marginBottom: 25 }}>
-      <Text style={[s.heading, !desktop && { fontSize: 32, lineHeight: 39 }]}>
-        {title}
-      </Text>
-      <Text style={s.body}>{text}</Text>
-    </View>
+    <PageIntro
+      title={title}
+      text={text}
+      icon={
+        tab === "Messages"
+          ? "message-circle"
+          : tab === "My trades"
+            ? "repeat"
+            : "user"
+      }
+    />
   );
   const stat = (value: string, label: string) => (
     <View style={s.stats}>
@@ -594,14 +600,16 @@ function Workspace() {
                             gap: 20,
                           }}
                         >
-                          <View style={{ flex: 1, gap: 6 }}>
+                          <View style={[s.requestSection, { flex: 1, gap: 6 }]}>
                             <Text style={s.eyebrow}>YOU RECEIVE</Text>
                             <Text style={s.body}>
                               {t.need || "Job details still to add"}
                             </Text>
                           </View>
                           <Icon name="repeat" />
-                          <View style={{ flex: 1, gap: 6 }}>
+                          <View
+                            style={[s.capabilitySection, { flex: 1, gap: 6 }]}
+                          >
                             <Text style={s.eyebrow}>YOU PROVIDE</Text>
                             <Text style={s.body}>
                               {t.offer || "Your offer still to add"}
@@ -678,6 +686,7 @@ function Workspace() {
                         onPress={() => setConversation(id)}
                         style={[
                           s.nav,
+                          s.threadRow,
                           {
                             backgroundColor:
                               conversation === id ? C.pale : "#fff",
@@ -714,7 +723,7 @@ function Workspace() {
                     />
                   ) : (
                     <>
-                      <View style={s.between}>
+                      <View style={[s.between, s.conversationHeader]}>
                         <View>
                           <Text style={s.h3}>{partner.name}</Text>
                           <Text style={s.small}>
@@ -731,7 +740,7 @@ function Workspace() {
                         title="Preview conversation"
                         text="Messages stay on this device. No real person receives them or replies."
                       />
-                      <View style={{ gap: 14, minHeight: 200 }}>
+                      <View style={s.conversationSurface}>
                         {safeMessages
                           .filter((m) => m.memberId === conversation)
                           .map((m) => (
@@ -1035,7 +1044,7 @@ function Workspace() {
                 key={name}
                 accessibilityLabel={name}
                 onPress={() => go(name)}
-                style={[s.mobileNav, tab === name && s.navActive]}
+                style={[s.mobileNav, tab === name && s.mobileSelected]}
               >
                 <Icon name={i} />
                 <Text style={s.mobileLabel}>
@@ -1202,9 +1211,21 @@ function Workspace() {
               )}
               {modal === "member" && (
                 <>
-                  <View style={s.row}>
+                  <View
+                    style={[
+                      s.profileIdentity,
+                      !desktop && {
+                        flexDirection: "column",
+                        alignItems: "flex-start",
+                      },
+                    ]}
+                  >
                     <View
-                      style={[s.avatarLarge, { backgroundColor: member.color }]}
+                      style={[
+                        s.avatarLarge,
+                        { backgroundColor: member.color },
+                        !desktop && { width: 56, height: 56, borderRadius: 18 },
+                      ]}
                     >
                       <Text style={[s.h2, { fontSize: 26 }]}>
                         {member.initials}
@@ -1222,7 +1243,14 @@ function Workspace() {
                     <Pressable
                       accessibilityRole="button"
                       accessibilityLabel="Save profile"
-                      style={s.iconButton}
+                      style={[
+                        s.iconButton,
+                        !desktop && {
+                          position: "absolute",
+                          top: 18,
+                          right: 18,
+                        },
+                      ]}
                       onPress={() => toggleSaved(member.id)}
                     >
                       <Icon
@@ -1235,7 +1263,7 @@ function Workspace() {
                   </View>
                   <Text style={s.bold}>{member.title}</Text>
                   <Text style={s.body}>{member.about}</Text>
-                  <View style={{ gap: 10 }}>
+                  <View style={s.trackRecord}>
                     <Text style={s.h3}>Capability and track record</Text>
                     <Text style={s.body}>
                       {member.years} years’ experience (self-described) ·{" "}

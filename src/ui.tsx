@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Feather } from "@expo/vector-icons";
 import {
   Pressable,
@@ -7,6 +7,7 @@ import {
   TextInput,
   View,
   ViewStyle,
+  useWindowDimensions,
 } from "react-native";
 export type IconName = React.ComponentProps<typeof Feather>["name"];
 export const C = {
@@ -66,7 +67,11 @@ export function Button({
         {label}
       </Text>
       {icon && (
-        <Icon name={icon} size={17} color={secondary ? C.green : "#fff"} />
+        <Icon
+          name={icon}
+          size={17}
+          color={danger ? "#914f38" : secondary ? C.green : "#fff"}
+        />
       )}
     </Pressable>
   );
@@ -111,6 +116,7 @@ export function Field({
   placeholder?: string;
   multiline?: boolean;
 }) {
+  const [focused, setFocused] = useState(false);
   return (
     <View style={{ gap: 8, marginBottom: 18 }}>
       <Text style={s.label}>{label}</Text>
@@ -121,8 +127,11 @@ export function Field({
         placeholder={placeholder}
         placeholderTextColor="#89958D"
         multiline={multiline}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
         style={[
           s.input,
+          focused && s.inputFocused,
           multiline && { minHeight: 90, textAlignVertical: "top" },
         ]}
       />
@@ -136,6 +145,34 @@ export const Card = ({
   children: React.ReactNode;
   style?: ViewStyle;
 }) => <View style={[s.card, style]}>{children}</View>;
+export function PageIntro({
+  title,
+  text,
+  icon,
+}: {
+  title: string;
+  text: string;
+  icon: IconName;
+}) {
+  const compact = useWindowDimensions().width < 980;
+  return (
+    <View style={[s.pageIntro, { padding: compact ? 22 : 30 }]}>
+      <View style={s.introIcon}>
+        <Icon name={icon} color="#D7E8D9" size={22} />
+      </View>
+      <Text
+        style={[
+          s.heading,
+          s.introTitle,
+          compact && { fontSize: 30, lineHeight: 37 },
+        ]}
+      >
+        {title}
+      </Text>
+      <Text style={[s.body, s.introBody]}>{text}</Text>
+    </View>
+  );
+}
 export function Note({
   title,
   text,
@@ -232,6 +269,8 @@ export const s = StyleSheet.create({
     backgroundColor: C.pale,
     borderWidth: 1,
     borderColor: "#D6E6DB",
+    borderLeftWidth: 4,
+    borderLeftColor: C.green,
   },
   navText: { fontSize: 14, color: C.muted, fontWeight: "600", flexShrink: 1 },
   content: {
@@ -306,7 +345,7 @@ export const s = StyleSheet.create({
     flexDirection: "row",
     gap: 7,
     alignItems: "center",
-    minHeight: 37,
+    minHeight: 44,
     borderWidth: 1,
     borderColor: C.line,
     paddingHorizontal: 14,
@@ -362,9 +401,34 @@ export const s = StyleSheet.create({
   },
   capabilityEyebrow: {
     color: C.green,
+    fontSize: 11,
+    letterSpacing: 0.9,
+    flexShrink: 1,
   },
   requestEyebrow: {
     color: "#805D2A",
+    fontSize: 11,
+    letterSpacing: 0.9,
+    flexShrink: 1,
+  },
+  profileIdentity: {
+    padding: 18,
+    borderRadius: 20,
+    backgroundColor: "#EAF1E8",
+    borderWidth: 1,
+    borderColor: "#D1DDCD",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 14,
+    flexWrap: "wrap",
+  },
+  trackRecord: {
+    padding: 18,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: C.line,
+    backgroundColor: "#FFFFFF",
+    gap: 10,
   },
   needTag: {
     maxWidth: "100%",
@@ -393,6 +457,66 @@ export const s = StyleSheet.create({
     color: C.ink,
     minHeight: 50,
   },
+  inputFocused: {
+    borderColor: C.green,
+    backgroundColor: "#FFFFFF",
+    borderWidth: 2,
+  },
+  pageIntro: {
+    backgroundColor: "#193C2E",
+    borderRadius: 24,
+    gap: 13,
+    marginBottom: 24,
+    overflow: "hidden",
+  },
+  introIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    backgroundColor: "#2B503D",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  introTitle: { color: "#FCF9EF", maxWidth: 720 },
+  introBody: { color: "#CCDCD0", maxWidth: 640 },
+  communityEmblem: {
+    width: 54,
+    height: 58,
+    borderRadius: 16,
+    borderBottomLeftRadius: 25,
+    borderBottomRightRadius: 25,
+    backgroundColor: "#193C2E",
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+  },
+  communityIdentity: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 14,
+    flex: 1,
+    minWidth: 0,
+  },
+  cardActions: {
+    borderTopWidth: 1,
+    borderColor: C.line,
+    paddingTop: 16,
+    marginTop: 3,
+  },
+  threadRow: { borderWidth: 1, borderColor: C.line, paddingVertical: 16 },
+  conversationHeader: {
+    borderBottomWidth: 1,
+    borderColor: C.line,
+    paddingBottom: 18,
+  },
+  conversationSurface: {
+    backgroundColor: "#F3F5F1",
+    padding: 18,
+    borderRadius: 18,
+    gap: 16,
+    minHeight: 240,
+  },
+  mobileSelected: { backgroundColor: C.pale, borderRadius: 16 },
   label: { fontSize: 13, color: C.ink, fontWeight: "700" },
   note: {
     minWidth: 0,
@@ -410,6 +534,10 @@ export const s = StyleSheet.create({
     paddingHorizontal: 20,
     alignItems: "center",
     gap: 15,
+    backgroundColor: "#FFFEFC",
+    borderRadius: 22,
+    borderWidth: 1,
+    borderColor: C.line,
   },
   emptyIcon: {
     width: 66,
@@ -488,7 +616,12 @@ export const s = StyleSheet.create({
     borderColor: C.line,
     overflow: "hidden",
   },
-  modalHeader: { padding: 22, borderBottomWidth: 1, borderColor: C.line },
+  modalHeader: {
+    padding: 22,
+    borderBottomWidth: 1,
+    borderColor: C.line,
+    backgroundColor: "#FFFFFF",
+  },
   modalBody: { padding: 24, gap: 20 },
   bottomNav: {
     flexDirection: "row",
@@ -497,6 +630,8 @@ export const s = StyleSheet.create({
     backgroundColor: "#FFFEFC",
     paddingTop: 7,
     paddingBottom: 8,
+    paddingHorizontal: 12,
+    gap: 6,
     shadowColor: "#102219",
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.08,
@@ -519,9 +654,9 @@ export const s = StyleSheet.create({
   },
   hero: { paddingBottom: 28, gap: 14 },
   heroPanel: {
-    backgroundColor: "#E8F1EB",
+    backgroundColor: "#193C2E",
     borderWidth: 1,
-    borderColor: "#D3E3D8",
+    borderColor: "#193C2E",
     borderRadius: 24,
     padding: 28,
     overflow: "hidden",
@@ -530,8 +665,8 @@ export const s = StyleSheet.create({
     width: 42,
     height: 4,
     borderRadius: 4,
-    backgroundColor: C.green,
-    marginBottom: 18,
+    backgroundColor: "#C1D7A4",
+    marginBottom: 8,
   },
   search: {
     width: "100%",
@@ -557,17 +692,32 @@ export const s = StyleSheet.create({
     color: C.ink,
     paddingVertical: 17,
   },
-  stats: { flex: 1, minWidth: 84, padding: 14, gap: 4 },
+  stats: {
+    flex: 1,
+    minWidth: 84,
+    padding: 16,
+    gap: 6,
+    backgroundColor: "#F7FAF6",
+    borderRadius: 14,
+  },
   statNumber: { fontSize: 27, fontWeight: "700", color: C.ink },
   step: { flex: 1, height: 4, borderRadius: 4, backgroundColor: C.line },
   message: {
     padding: 15,
     borderRadius: 18,
-    backgroundColor: C.pale,
+    backgroundColor: "#FFFFFF",
+    borderWidth: 1,
+    borderColor: C.line,
+    borderBottomLeftRadius: 4,
     maxWidth: "90%",
     alignSelf: "flex-start",
   },
-  myMessage: { backgroundColor: "#DCECE2", alignSelf: "flex-end" },
+  myMessage: {
+    backgroundColor: "#DCECE2",
+    alignSelf: "flex-end",
+    borderBottomLeftRadius: 18,
+    borderBottomRightRadius: 4,
+  },
   footer: {
     fontSize: 11,
     color: C.muted,
