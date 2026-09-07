@@ -310,7 +310,9 @@ export function ReferenceDiscovery({
           </View>
         </View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 14, paddingBottom: 4 }}>
-          {visibleMembers.map((member) => (
+          {visibleMembers.map((member) => {
+            const community = state.communities.find((item) => item.id === member.communityId);
+            return (
             <View key={member.id} style={{ width: cardWidth, borderRadius: 15, overflow: "hidden", backgroundColor: "#fff", borderWidth: 1, borderColor: C.line, shadowColor: "#102219", shadowOpacity: .08, shadowRadius: 12, elevation: 3 }}>
               <View>
                 <Pressable accessibilityRole="button" accessibilityLabel={`View ${member.name}`} onPress={() => onOpen(member)}>
@@ -339,11 +341,9 @@ export function ReferenceDiscovery({
                     <Text style={[s.small, { color: C.ink }]}>{(4.6 + Math.min(member.karma, 40) / 100).toFixed(1)} ({member.trades})</Text>
                   </View>
                 </View>
-                <View style={[s.row, { gap: 5, flexWrap: "nowrap" }]}>
-                  <Icon name="users" size={13} color="#3F7C65" />
-                  <Text style={[s.small, { flex: 1 }]} numberOfLines={1}>{state.communities.find((community) => community.id === member.communityId)?.name || member.locationLabel}</Text>
-                  <View style={[s.row, { gap: 4, flexShrink: 0 }]}><Icon name="map-pin" size={12} color="#52677B" /><Text style={s.small}>{member.distance.toFixed(1)} mi</Text></View>
-                </View>
+                <Text style={[s.small, { color: C.muted, fontSize: 12.5 }]} numberOfLines={1}>
+                  {member.locationLabel} · {community?.name || "Independent neighbor"}{community ? ` · Level ${community.level}` : ""}
+                </Text>
                 {[
                   ["Helps:", member.offers, "#E7F5EC", "#164F3E"],
                   ["Needs:", member.wants, "#FFF0E9", "#98452D"],
@@ -370,7 +370,8 @@ export function ReferenceDiscovery({
                 </Pressable>
               </View>
             </View>
-          ))}
+            );
+          })}
         </ScrollView>
       </View>
 
