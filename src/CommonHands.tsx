@@ -88,6 +88,7 @@ export default function CommonHands() {
 function Workspace() {
   const { width } = useWindowDimensions();
   const desktop = width >= 980;
+  const compactMobile = !desktop && width < 430;
   const [state, setState] = useState<State>(initialState);
   const [ready, setReady] = useState(false);
   const [storageOK, setStorageOK] = useState(true);
@@ -504,30 +505,35 @@ function Workspace() {
           style={{ flex: 1 }}
           contentContainerStyle={[
             s.content,
-            { padding: desktop ? 34 : 16, maxWidth: desktop ? 1200 : 600 },
+            {
+              paddingHorizontal: desktop ? 34 : 16,
+              paddingTop: desktop ? 34 : 16,
+              paddingBottom: desktop ? 40 : 110,
+              maxWidth: desktop ? 1200 : 600,
+            },
           ]}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator
         >
-          <View style={[s.between, s.topbar]}>
-            <View style={[!desktop && s.row, { gap: desktop ? 2 : 10 }]}>
+          <View style={[s.between, s.topbar, !desktop && { flexWrap: compactMobile ? "wrap" : "nowrap" }]}>
+            <View style={[!desktop && s.row, { gap: desktop ? 2 : 10 }, !desktop && { flex: 1, minWidth: 0 }, compactMobile && { width: "100%", flexBasis: "100%" }]}>
               {!desktop && (
-                <View style={{ width: 46, height: 46, borderRadius: 15, backgroundColor: "#E1F2E7", alignItems: "center", justifyContent: "center" }}>
-                  <Icon name="users" size={27} />
+                <View style={{ width: 36, height: 36, borderRadius: 12, backgroundColor: "#E1F2E7", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <Icon name="users" size={22} />
                 </View>
               )}
-              <View>
-                <Text style={desktop ? s.eyebrow : [s.brand, { fontSize: 29 }]}>
+              <View style={!desktop ? { flex: 1, minWidth: 0 } : undefined}>
+                <Text numberOfLines={1} style={desktop ? s.eyebrow : [s.brand, { fontSize: compactMobile ? 27 : 29 }]}>
                   {desktop ? pageTitle.toUpperCase() : "commonhands."}
                 </Text>
               {!desktop && (
-                <Text style={[s.small, { color: C.ink, fontSize: 13 }]}>
+                <Text numberOfLines={1} style={[s.small, { color: C.ink, fontSize: 12, lineHeight: 16 }]}>
                   Skills. Support. Stronger Together.
                 </Text>
               )}
               </View>
             </View>
-            <View style={s.row}>
+            <View style={[s.row, !desktop && { gap: 8, flexShrink: 0 }, compactMobile && { marginLeft: "auto" }]}>
               {desktop && (
                 <View style={s.badge}>
                   <Text style={s.small}>Interactive demo</Text>
@@ -538,7 +544,7 @@ function Workspace() {
                   accessibilityRole="button"
                   accessibilityLabel="Search"
                   onPress={() => notify("Use the search field below to find people and skills.")}
-                  style={[s.iconButton, { backgroundColor: "transparent" }]}
+                  style={[s.iconButton, { backgroundColor: "transparent", width: 36, height: 36 }]}
                 >
                   <Icon name="search" size={24} color="#102334" />
                 </Pressable>
@@ -548,7 +554,7 @@ function Workspace() {
                   accessibilityRole="button"
                   accessibilityLabel="Notifications"
                   onPress={() => notify("You're all caught up.")}
-                  style={s.iconButton}
+                  style={[s.iconButton, { width: 36, height: 36 }]}
                 >
                   <Icon name="bell" />
                   <View
@@ -568,9 +574,9 @@ function Workspace() {
                 accessibilityRole="button"
                 accessibilityLabel="My profile"
                 onPress={() => go("My profile")}
-                style={s.avatar}
+                style={[s.avatar, !desktop && { width: 38, height: 38, borderRadius: 19 }]}
               >
-                <PhotoAvatar index={2} size={45} />
+                <PhotoAvatar index={2} size={desktop ? 45 : 38} />
               </Pressable>
               {desktop && (
                 <Pressable
