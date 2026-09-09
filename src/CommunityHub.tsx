@@ -269,60 +269,74 @@ export function CommunityHub({
     community: Community;
     reason?: string;
   }) => (
-    <Card style={{ gap: 17, borderTopWidth: 3, borderTopColor: "#B1C3A2" }}>
-      <View style={s.between}>
-        <View style={s.communityIdentity}>
-          <View style={s.communityEmblem}>
-            <Text style={[s.bold, { color: "#FCF9EF", fontSize: 17 }]}>
-              {community.icon}
-            </Text>
+    <Card style={{ gap: 0, padding: 0, overflow: "hidden" }}>
+      <View style={{ backgroundColor: "#174B38", padding: 18 }}>
+        <View style={s.between}>
+          <View style={s.communityIdentity}>
+            <View
+              style={[
+                s.communityEmblem,
+                { backgroundColor: "rgba(255,255,255,.13)" },
+              ]}
+            >
+              <Text style={[s.bold, { color: "#FCF9EF", fontSize: 17 }]}>
+                {community.icon}
+              </Text>
+            </View>
+            <View style={{ flex: 1, minWidth: 0 }}>
+              <Text style={[s.h3, { color: "#fff" }]}>{community.name}</Text>
+              <Text style={[s.small, { color: "#CDE1D4" }]}>
+                Level {community.level} · {fmt(community.memberCount)} members
+              </Text>
+            </View>
           </View>
-          <View style={{ flex: 1, minWidth: 0 }}>
-            <Text style={s.h3}>{community.name}</Text>
-            <Text style={s.small}>
-              Level {community.level} · {fmt(community.memberCount)} members
-            </Text>
-          </View>
+          {memberOf(community.id) && (
+            <View style={[s.badge, { backgroundColor: "#DDF4E7" }]}>
+              <Text style={[s.small, { color: C.green }]}>✓ Joined</Text>
+            </View>
+          )}
         </View>
-        {memberOf(community.id) && (
-          <View style={s.badge}>
-            <Text style={s.small}>Joined</Text>
+      </View>
+      <View style={{ padding: 18, gap: 13 }}>
+        <Text style={s.body}>{community.description}</Text>
+        {reason && (
+          <View
+            style={[
+              s.row,
+              { backgroundColor: C.pale, padding: 10, borderRadius: 12 },
+            ]}
+          >
+            <Icon name="target" size={15} />
+            <Text style={[s.small, { flex: 1 }]}>{reason}</Text>
           </View>
         )}
-      </View>
-      <Text style={s.body}>{community.description}</Text>
-      {reason && (
-        <View style={s.row}>
-          <Icon name="target" size={15} />
-          <Text style={s.small}>{reason}</Text>
+        <View style={s.wrap}>
+          {community.specialties.slice(0, 4).map((x) => (
+            <View key={x} style={s.serviceTag}>
+              <Text style={s.serviceTagText}>{x}</Text>
+            </View>
+          ))}
         </View>
-      )}
-      <View style={s.wrap}>
-        {community.specialties.slice(0, 4).map((x) => (
-          <View key={x} style={s.serviceTag}>
-            <Text style={s.serviceTagText}>{x}</Text>
-          </View>
-        ))}
-      </View>
-      <View style={[s.wrap, s.cardActions]}>
-        <Button
-          label="View community"
-          secondary
-          onPress={() => {
-            setSelectedId(community.id);
-            setDetailTab("Overview");
-          }}
-        />
-        {!memberOf(community.id) && (
+        <View style={[s.wrap, s.cardActions]}>
           <Button
-            label={
-              community.membershipType === "approval"
-                ? "Request to join"
-                : "Join community"
-            }
-            onPress={() => join(community)}
+            label="View community"
+            secondary
+            onPress={() => {
+              setSelectedId(community.id);
+              setDetailTab("Overview");
+            }}
           />
-        )}
+          {!memberOf(community.id) && (
+            <Button
+              label={
+                community.membershipType === "approval"
+                  ? "Request to join"
+                  : "Join community"
+              }
+              onPress={() => join(community)}
+            />
+          )}
+        </View>
       </View>
     </Card>
   );
